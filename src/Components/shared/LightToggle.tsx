@@ -16,7 +16,10 @@ const LightToggle = ({
         />
       </svg>
       <div
-        onClick={() => setIsLight(!isLight)}
+        onClick={() => {
+          localStorage.setItem("theme", `${!isLight}`);
+          setIsLight(!isLight);
+        }}
         className="h-[20px] w-[40px] cursor-pointer rounded-full bg-purple p-1"
       >
         <div

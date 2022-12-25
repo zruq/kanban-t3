@@ -5,6 +5,8 @@ import reducer from "../state/appStateReducer";
 import Button from "./shared/Button";
 import Checkbox from "./shared/Checkbox";
 import Dropdown from "./shared/Dropdown";
+import TextField from "./shared/TextField";
+import Sidebar from "./Sidebar";
 
 type AppProps = {
   initBoard: QBoard;
@@ -18,7 +20,13 @@ const App = ({ initBoard, isLight, setIsLight }: AppProps) => {
   console.log("stito", appState);
   return (
     <>
-      <div className="bg-purple">lll</div>
+      <Sidebar
+        currentBoard="sweet thing"
+        boards={["sweet thing", "I watch you"]}
+        isLight={isLight}
+        setIsLight={setIsLight}
+      />
+
       <div className="h-screen w-full">
         <main
           className={` h-full w-full bg-lightGrey dark:bg-darkGrey
@@ -59,6 +67,9 @@ const App = ({ initBoard, isLight, setIsLight }: AppProps) => {
               currentColumn={"doing"}
               columns={["Doing", "To do", "Done"]}
             />
+          </div>
+          <div className="p-4">
+            <TextField />
           </div>
         </main>
       </div>

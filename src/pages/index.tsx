@@ -23,8 +23,8 @@ const Home: NextPage = () => {
     { enabled: session.data?.user !== undefined }
   );
 
-  if (session.status === "loading" || session.status === "unauthenticated")
-    return <div className="">auth</div>;
+  // if (session.status === "loading" || session.status === "unauthenticated")
+  //   return <div className="">auth</div>;
 
   if (initBoard.isLoading) return <div className="">Loading</div>;
 

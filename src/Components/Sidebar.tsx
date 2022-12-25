@@ -1,5 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import Button from "./shared/Button";
+import LightToggle from "./shared/LightToggle";
 
 type SidebarProps = {
   boards: string[];
@@ -14,8 +15,8 @@ const Sidebar = ({
   setIsLight,
 }: SidebarProps) => {
   return (
-    <div className="flex h-screen w-[18.75rem] flex-col items-start justify-between bg-white p-8 dark:bg-darkGrey ">
-      <div className="h-90%">
+    <div className="flex h-screen w-[18.75rem] flex-col items-start justify-between bg-white px-6 py-8 dark:bg-darkGrey ">
+      <div className="">
         {/* LOGO SVG */}
         {!isLight ? (
           <svg width="153" height="26" xmlns="http://www.w3.org/2000/svg">
@@ -90,6 +91,9 @@ const Sidebar = ({
             <div className="capitalize text-purple ">+ Create New Board</div>
           </Button>
         </div>
+      </div>
+      <div className="">
+        <LightToggle isLight={isLight} setIsLight={setIsLight} />
       </div>
     </div>
   );

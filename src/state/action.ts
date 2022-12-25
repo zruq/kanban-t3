@@ -1,5 +1,5 @@
 import type { SubTask, Task } from "@prisma/client";
-import { QBoard } from "../server/trpc/router/_app";
+import type { QBoard } from "../server/trpc/router/_app";
 
 export type Action =
   | AddTask
@@ -9,6 +9,7 @@ export type Action =
   | DeleteBoard
   | EditBoard
   | AddBoard
+  | ChangeBoard
   | MoveTask;
 
 type AddTask = {
@@ -33,7 +34,6 @@ type ToggleSubTask = {
     taskindex: number;
     columnindex: number;
     index: number;
-    id: number;
   };
 };
 

@@ -1,14 +1,12 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
+// import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 import { trpc } from "../utils/trpc";
-import Button from "../Components/shared/Button";
-import { useReducer, useState } from "react";
-import reducer from "../state/appStateReducer";
+import { useState } from "react";
+import App from "../Components/App";
 import type { QBoard } from "../server/trpc/router/_app";
-import Checkbox from "../Components/shared/Checkbox";
 
 const Home: NextPage = () => {
   const [isLight, setIsLight] = useState<boolean>(() => {
@@ -20,17 +18,15 @@ const Home: NextPage = () => {
     return true;
   });
   const session = useSession();
-  // const data = trpc.auth.getData.useQuery(
-  //   undefined, // no input
-  //   { enabled: session.data?.user !== undefined }
-  // );
-  const startData = trpc.auth.getLatestBoard.useQuery(
+  const initBoard = trpc.auth.getLatestBoard.useQuery(
     undefined, // no input
     { enabled: session.data?.user !== undefined }
   );
-  const startBoard = startData.data as QBoard;
-  console.log(startBoard);
-  const [state, dispatch] = useReducer(reducer, startBoard);
+
+  if (session.status === "loading" || session.status === "unauthenticated")
+    return <div className="">auth</div>;
+
+  if (initBoard.isLoading) return <div className="">Loading</div>;
 
   return (
     <>
@@ -44,37 +40,12 @@ const Home: NextPage = () => {
           isLight ? "" : "dark"
         } flex  h-screen w-screen overflow-hidden`}
       >
-        <div className="bg-purple">lll</div>
-        <div className="h-screen w-full">
-          <main
-            className={` h-full w-full bg-lightGrey dark:bg-darkGrey
-           `}
-          >
-            <div className="my-4">
-              <Button cType="primaryS" onClick={() => setIsLight(!isLight)}>
-                Button Primary (S)
-              </Button>
-            </div>
-            <div className="my-4">
-              <Button cType="secondary">Button secondary</Button>
-            </div>
-            <div className="my-4">
-              <Button cType="destructive">Button destructive</Button>
-            </div>
-            <div className="my-4">
-              <Button cType="primaryL">Button Primary (L)</Button>
-            </div>
-            <div className="my-10">
-              <Checkbox
-                title={startBoard?.Column[2]?.Task[0]?.SubTask[0]?.title || ""}
-                isCompleted={
-                  startBoard?.Column[2]?.Task[0]?.SubTask[0]?.isCompleted ||
-                  false
-                }
-              />
-            </div>
-          </main>
-        </div>
+        <App
+          isLight={isLight}
+          setIsLight={setIsLight}
+          initBoard={initBoard.data as QBoard}
+        />
+        {initBoard?.data?.name}
       </div>
     </>
   );
@@ -82,26 +53,26 @@ const Home: NextPage = () => {
 
 export default Home;
 
-const AuthShowcase: React.FC = () => {
-  const { data: sessionData } = useSession();
+// const AuthShowcase: React.FC = () => {
+//   const { data: sessionData } = useSession();
 
-  const { data: secretMessage } = trpc.auth.getSecretMessage.useQuery(
-    undefined, // no input
-    { enabled: sessionData?.user !== undefined }
-  );
+//   const { data: secretMessage } = trpc.auth.getSecretMessage.useQuery(
+//     undefined, // no input
+//     { enabled: sessionData?.user !== undefined }
+//   );
 
-  return (
-    <div className="flex flex-col items-center justify-center gap-4">
-      <p className="text-2xl text-center text-white">
-        {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
-        {secretMessage && <span> - {secretMessage}</span>}
-      </p>
-      <button
-        className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-        onClick={sessionData ? () => signOut() : () => signIn()}
-      >
-        {sessionData ? "Sign out" : "Sign in"}
-      </button>
-    </div>
-  );
-};
+//   return (
+//     <div className="flex flex-col items-center justify-center gap-4">
+//       <p className="text-2xl text-center text-white">
+//         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
+//         {secretMessage && <span> - {secretMessage}</span>}
+//       </p>
+//       <button
+//         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+//         onClick={sessionData ? () => signOut() : () => signIn()}
+//       >
+//         {sessionData ? "Sign out" : "Sign in"}
+//       </button>
+//     </div>
+//   );
+// };

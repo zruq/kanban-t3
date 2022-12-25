@@ -15,29 +15,35 @@ datasource db {
 }
 
 model Board {
-  id     String   @id @default(uuid())
-  name   String   @db.VarChar(255)
-  User   User     @relation(fields: [userId], references: [id])
-  userId String
-  Column Column[]
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String   @db.VarChar(255)
+  User      User     @relation(fields: [userId], references: [id])
+  userId    String
+  Column    Column[]
 }
 
 model Column {
-  id      String @id @default(uuid())
-  name    String @db.VarChar(255)
-  board   Board  @relation(fields: [boardId], references: [id])
-  boardId String
-  Task    Task[]
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String   @db.VarChar(255)
+  board     Board    @relation(fields: [boardId], references: [id])
+  boardId   Int
+  Task      Task[]
 
   @@unique([name, boardId])
 }
 
 model Task {
-  id          String    @id @default(uuid())
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   title       String    @db.VarChar(255)
   description String?
   status      Column    @relation(fields: [statusName, boardId], references: [name, boardId])
-  boardId     String
+  boardId     Int
   statusName  String
   SubTask     SubTask[]
 
@@ -45,11 +51,13 @@ model Task {
 }
 
 model SubTask {
-  id          String  @id @default(uuid())
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   title       String
-  isCompleted Boolean @default(false)
-  mainTask    Task    @relation(fields: [taskId], references: [id])
-  taskId      String
+  isCompleted Boolean  @default(false)
+  mainTask    Task     @relation(fields: [taskId], references: [id])
+  taskId      Int
 
   @@unique([title, taskId])
 }

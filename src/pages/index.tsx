@@ -5,7 +5,9 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import { trpc } from "../utils/trpc";
 import Button from "../Components/shared/Button";
-import { useState } from "react";
+import { useReducer, useState } from "react";
+import reducer from "../state/appStateReducer";
+import type { QBoard } from "../server/trpc/router/_app";
 
 const Home: NextPage = () => {
   const [isLight, setIsLight] = useState<boolean>(() => {
@@ -16,6 +18,19 @@ const Home: NextPage = () => {
     }
     return true;
   });
+  const session = useSession();
+  // const data = trpc.auth.getData.useQuery(
+  //   undefined, // no input
+  //   { enabled: session.data?.user !== undefined }
+  // );
+  const startData = trpc.auth.getLatestBoard.useQuery(
+    undefined, // no input
+    { enabled: session.data?.user !== undefined }
+  );
+  const startBoard = startData.data as QBoard;
+  console.log(startBoard);
+  const [state, dispatch] = useReducer(reducer, startBoard);
+
   return (
     <>
       <Head>

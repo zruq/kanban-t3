@@ -6,7 +6,7 @@ module.exports = {
     extend: {},
     colors: {
       purple: "#635FC7",
-      purpleHover: "A8A4FF",
+      purpleHover: "#A8A4FF",
       black: "#000112",
       veryDarkGrey: "#20212C",
       darkGrey: "#2B2C37",

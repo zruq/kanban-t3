@@ -11,6 +11,21 @@ export type AppRouter = typeof appRouter;
 
 export type ReactQueryOptions = inferReactQueryProcedureOptions<AppRouter>;
 
-export type InitialDataType = NonNullable<
-  ReactQueryOptions["auth"]["getData"]["initialData"]
->;
+export type QBoard = {
+  Column: {
+    Task: {
+      SubTask: {
+        id: number;
+        title: string;
+        isCompleted: boolean;
+      }[];
+      id: number;
+      title: string;
+      description: string | null;
+    }[];
+    id: number;
+    name: string;
+  }[];
+  id: number;
+  name: string;
+};

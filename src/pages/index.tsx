@@ -8,6 +8,7 @@ import Button from "../Components/shared/Button";
 import { useReducer, useState } from "react";
 import reducer from "../state/appStateReducer";
 import type { QBoard } from "../server/trpc/router/_app";
+import Checkbox from "../Components/shared/Checkbox";
 
 const Home: NextPage = () => {
   const [isLight, setIsLight] = useState<boolean>(() => {
@@ -44,9 +45,9 @@ const Home: NextPage = () => {
         } flex  h-screen w-screen overflow-hidden`}
       >
         <div className="bg-purple">lll</div>
-        <div className="bg-red">
+        <div className="h-screen w-full">
           <main
-            className={` bg-lightGrey dark:bg-darkGrey 
+            className={` h-full w-full bg-lightGrey dark:bg-darkGrey
            `}
           >
             <div className="my-4">
@@ -62,6 +63,15 @@ const Home: NextPage = () => {
             </div>
             <div className="my-4">
               <Button cType="primaryL">Button Primary (L)</Button>
+            </div>
+            <div className="my-10">
+              <Checkbox
+                title={startBoard?.Column[2]?.Task[0]?.SubTask[0]?.title || ""}
+                isCompleted={
+                  startBoard?.Column[2]?.Task[0]?.SubTask[0]?.isCompleted ||
+                  false
+                }
+              />
             </div>
           </main>
         </div>

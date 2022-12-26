@@ -63,7 +63,7 @@ const Navbar = ({ showSideBar }: NavbarProps) => {
           width="5"
           height="20"
           xmlns="http://www.w3.org/2000/svg"
-          className="cursor-pointer fill-mediumGrey hover:fill-purple"
+          className="cursor-pointer fill-mediumGrey hover:fill-purple dark:hover:fill-purpleHover"
         >
           <g fillRule="evenodd">
             <circle cx="2.308" cy="2.308" r="2.308" />

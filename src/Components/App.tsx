@@ -2,6 +2,7 @@ import type { Dispatch, SetStateAction } from "react";
 import { useReducer, useState } from "react";
 import type { QBoard } from "../server/trpc/router/_app";
 import reducer from "../state/appStateReducer";
+import ColumnCard from "./ColumnCard";
 import Button from "./shared/Button";
 import Checkbox from "./shared/Checkbox";
 import Dropdown from "./shared/Dropdown";
@@ -26,10 +27,28 @@ const App = ({ initBoard, isLight, setIsLight }: AppProps) => {
            `}
         >
           <div className="p-10">
-            <TaskCard
-              numberOfCompletedSubtasks={0}
-              numberOfTotalSubtasks={3}
-              title="Build UI for onboarding flow"
+            <ColumnCard
+              Task={[
+                {
+                  id: 1,
+                  numberOfCompletedSubtasks: 0,
+                  numberOfTotalSubtasks: 3,
+                  title: "Build UI for onboarding flow",
+                },
+                {
+                  id: 2,
+                  numberOfCompletedSubtasks: 2,
+                  numberOfTotalSubtasks: 3,
+                  title: "Add account management endpoints",
+                },
+                {
+                  id: 3,
+                  numberOfCompletedSubtasks: 0,
+                  numberOfTotalSubtasks: 2,
+                  title: "Build settings UI",
+                },
+              ]}
+              name="todo"
             />
           </div>
           {/* <div className="my-4">

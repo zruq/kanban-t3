@@ -3,6 +3,11 @@ module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   darkMode: "class",
   theme: {
+    screens: {
+      tablet: "620px",
+      desktop: "1000px",
+    },
+
     extend: {},
     colors: {
       purple: "#635FC7",
@@ -32,10 +37,6 @@ module.exports = {
       bodyl: ["13px", { lineHeight: "23px", fontWeight: 500 }],
       bodym: ["12px", { lineHeight: "15px", fontWeight: 500 }],
     },
-  },
-  screens: {
-    tablet: "620px",
-    desktop: "1000px",
   },
 
   plugins: [],

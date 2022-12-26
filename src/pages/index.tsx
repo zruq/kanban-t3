@@ -7,6 +7,8 @@ import { trpc } from "../utils/trpc";
 import { useState } from "react";
 import App from "../Components/App";
 import type { QBoard } from "../server/trpc/router/_app";
+import Sidebar from "../Components/Sidebar";
+import Navbar from "../Components/Navbar";
 
 const Home: NextPage = () => {
   const [isLight, setIsLight] = useState<boolean>(() => {
@@ -17,6 +19,7 @@ const Home: NextPage = () => {
     }
     return true;
   });
+  const [showSideBar, setShowSidebar] = useState(false);
   const session = useSession();
   const initBoard = trpc.auth.getLatestBoard.useQuery(
     undefined, // no input
@@ -40,12 +43,25 @@ const Home: NextPage = () => {
           isLight ? "" : "dark"
         } flex  h-screen w-screen overflow-hidden`}
       >
-        <App
-          isLight={isLight}
-          setIsLight={setIsLight}
-          initBoard={initBoard.data as QBoard}
-        />
-        {initBoard?.data?.name}
+        {showSideBar && (
+          <Sidebar
+            setShowSidebar={setShowSidebar}
+            currentBoard={initBoard.data?.name || ""}
+            boards={[initBoard.data?.name || "", "sweet thing", "I watch you"]}
+            isLight={isLight}
+            setIsLight={setIsLight}
+          />
+        )}
+        <div className="h-full w-full">
+          {/* Navbar */}
+          <Navbar showSideBar={showSideBar} />
+          <button onClick={() => setShowSidebar(true)}>showsidebar</button>
+          <App
+            isLight={isLight}
+            setIsLight={setIsLight}
+            initBoard={initBoard.data as QBoard}
+          />
+        </div>
       </div>
     </>
   );

@@ -7,15 +7,17 @@ type SidebarProps = {
   currentBoard: string;
   isLight: boolean;
   setIsLight: Dispatch<SetStateAction<boolean>>;
+  setShowSidebar: Dispatch<SetStateAction<boolean>>;
 };
 const Sidebar = ({
+  setShowSidebar,
   boards,
   currentBoard,
   isLight,
   setIsLight,
 }: SidebarProps) => {
   return (
-    <div className="flex h-screen w-[18.75rem] flex-col items-start justify-between bg-white px-6 py-8 dark:bg-darkGrey ">
+    <div className="flex h-screen w-[18.75rem] flex-col items-start justify-between border-r border-linesLight bg-white px-6 py-8 dark:border-linesDark dark:bg-darkGrey ">
       <div className="">
         {/* LOGO SVG */}
         {!isLight ? (
@@ -97,6 +99,7 @@ const Sidebar = ({
       <div className="">
         <LightToggle isLight={isLight} setIsLight={setIsLight} />
         <Button
+          onClick={() => setShowSidebar(false)}
           cType={"ghost"}
           className="group -ml-[3.1rem] mt-2 flex w-[19rem] pl-14 "
         >

@@ -20,13 +20,6 @@ const App = ({ initBoard, isLight, setIsLight }: AppProps) => {
   console.log("stito", appState);
   return (
     <>
-      <Sidebar
-        currentBoard="sweet thing"
-        boards={["sweet thing", "I watch you"]}
-        isLight={isLight}
-        setIsLight={setIsLight}
-      />
-
       <div className="h-screen w-full">
         <main
           className={` h-full w-full bg-lightGrey dark:bg-darkGrey

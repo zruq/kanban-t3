@@ -4,7 +4,6 @@ import type {
   HTMLAttributes,
   SetStateAction,
 } from "react";
-import type { Action } from "../state/action";
 import TaskCard from "./TaskCard";
 
 export type TaskType = {
@@ -24,7 +23,6 @@ type ColumnCardProps = {
   >;
   index: number;
   tasks: TaskType[];
-  dispatch: Dispatch<Action>;
   name: string;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 

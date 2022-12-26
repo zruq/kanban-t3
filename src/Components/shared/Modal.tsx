@@ -34,7 +34,7 @@ const Modal = ({ children, setShowModal }: ModalProps) => {
   //   }, [isLight]);
   return createPortal(
     <div
-      className="absolute flex h-screen w-screen items-center justify-center bg-black bg-opacity-50"
+      className="absolute flex h-screen w-screen items-center justify-center overflow-auto bg-black bg-opacity-50"
       onClick={() => setShowModal(false)}
     >
       {children}

@@ -32,7 +32,6 @@ const App = ({ board }: AppProps) => {
           <ColumnCard
             setShowModal={setShowModal}
             index={index}
-            dispatch={dispatch}
             className="mr-6 w-[17.5rem]"
             key={col.id}
             tasks={col.Task}

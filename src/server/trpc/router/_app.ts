@@ -22,6 +22,7 @@ export type QBoard = {
       id: number;
       title: string;
       description: string | null;
+      statusName: string;
     }[];
     id: number;
     name: string;

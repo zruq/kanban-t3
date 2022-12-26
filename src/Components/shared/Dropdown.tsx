@@ -1,11 +1,20 @@
 import { useRef, useState } from "react";
+import type { Dispatch } from "react";
+import type { Action } from "../../state/action";
 
 type DropdownProps = {
-  columns: string[];
+  columns: { name: string; index: number }[];
   currentColumn: string;
+  indices: { taskindex: number; columnindex: number };
+  dispatch: Dispatch<Action>;
 };
 
-const Dropdown = ({ columns, currentColumn }: DropdownProps) => {
+const Dropdown = ({
+  dispatch,
+  columns,
+  currentColumn,
+  indices,
+}: DropdownProps) => {
   const [active, setActive] = useState(false);
   const [currCol, setCurrCol] = useState(currentColumn);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -23,7 +32,7 @@ const Dropdown = ({ columns, currentColumn }: DropdownProps) => {
         onClick={() => {
           setActive(!active);
         }}
-        className={`mb-2 flex h-[40px] w-[350px] cursor-pointer items-center justify-between rounded-[4px] border  ${
+        className={`mb-2 flex h-[40px]  cursor-pointer items-center justify-between rounded-[4px] border  ${
           active ? "border-purple" : "border-[#828FA3] border-opacity-25"
         }  py-2 px-4`}
       >
@@ -33,17 +42,27 @@ const Dropdown = ({ columns, currentColumn }: DropdownProps) => {
         </svg>
       </div>
       <ul
-        className={`fixed  z-50 w-[350px] rounded-lg bg-white p-4 dark:bg-veryDarkGrey ${
+        className={`fixed  z-50  rounded-lg bg-white p-4 dark:bg-veryDarkGrey ${
           active ? "" : "hidden"
         } `}
       >
         {columns.map((col) => (
           <li
-            onClick={() => setCurrCol(col)}
-            key={col}
+            onClick={() => {
+              setCurrCol(col.name);
+              dispatch({
+                type: "MOVE_TASK",
+                payload: {
+                  ...indices,
+                  newColumnIndex: col.index,
+                },
+              });
+              setActive(false);
+            }}
+            key={col.name}
             className="mb-2 cursor-pointer text-bodyl capitalize text-mediumGrey hover:text-black dark:hover:text-white"
           >
-            {col}
+            {col.name}
           </li>
         ))}
       </ul>

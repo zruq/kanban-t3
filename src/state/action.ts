@@ -49,8 +49,8 @@ type MoveTask = {
   type: "MOVE_TASK";
   payload: {
     columnindex: number;
-    id: number;
-    newColumnId: number;
+    taskindex: number;
+    newColumnIndex: number;
   };
 };
 

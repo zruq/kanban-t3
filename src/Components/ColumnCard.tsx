@@ -1,35 +1,74 @@
+import type {
+  DetailedHTMLProps,
+  Dispatch,
+  HTMLAttributes,
+  SetStateAction,
+} from "react";
+import type { Action } from "../state/action";
 import TaskCard from "./TaskCard";
 
-type ColumnCardProps = {
-  Task: {
-    numberOfTotalSubtasks: number;
-    numberOfCompletedSubtasks: number;
+export type TaskType = {
+  SubTask: {
     id: number;
     title: string;
+    isCompleted: boolean;
   }[];
-  name: string;
+  id: number;
+  title: string;
+  description: string | null;
+  statusName: string;
 };
+type ColumnCardProps = {
+  setShowModal: Dispatch<
+    SetStateAction<boolean | { id: number; index: number }>
+  >;
+  index: number;
+  tasks: TaskType[];
+  dispatch: Dispatch<Action>;
+  name: string;
+} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
-const ColumnCard = (column: ColumnCardProps) => {
+const ColumnCard = ({
+  setShowModal,
+  tasks,
+  name,
+  ...props
+}: ColumnCardProps) => {
+  // const [showModal, setShowModal] = useState<boolean | number>(false);
   return (
-    <div className="">
-      <div className="flex items-center justify-start pb-6">
-        <div className=" mr-3 h-[15px] w-[15px] rounded-full bg-[#49C4E5]"></div>
-        <h2 className=" text-hs uppercase text-mediumGrey">
-          {column.name} ({column.Task.length})
-        </h2>
+    <>
+      <div {...props}>
+        <div className="flex items-center justify-start pb-6">
+          <div className=" mr-3 h-[15px] w-[15px] rounded-full bg-[#49C4E5]"></div>
+          <h2 className=" text-hs uppercase text-mediumGrey">
+            {name} ({tasks.length})
+          </h2>
+        </div>
+        {tasks.map((task, index) => (
+          <TaskCard
+            onClick={() => setShowModal({ id: task.id, index })}
+            key={task.id}
+            numberOfCompletedSubtasks={
+              task.SubTask.filter((subtask) => subtask.isCompleted).length
+            }
+            numberOfTotalSubtasks={task.SubTask.length}
+            title={task.title}
+            className="mb-5"
+          />
+        ))}
       </div>
-      {column.Task.map((task) => (
-        <TaskCard
-          key={task.id}
-          numberOfCompletedSubtasks={task.numberOfCompletedSubtasks}
-          numberOfTotalSubtasks={task.numberOfTotalSubtasks}
-          title={task.title}
-          className="mb-5"
-        />
-      ))}
-    </div>
+    </>
   );
 };
 
 export default ColumnCard;
+
+//
+// col.Task.map((task) => {
+//     return {
+//       id: task.id,
+//       title: task.title,
+//       numberOfCompletedSubtasks:
+//       numberOfTotalSubtasks: task.SubTask.length,
+//     };
+//   })

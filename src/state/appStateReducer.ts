@@ -17,14 +17,19 @@ export default function reducer(state: QBoard, action: Action) {
     newState.Column[columnindex]!.Task[taskindex]!.SubTask[index]!.isCompleted =
       !isSubTaskCompleted;
     return newState;
-    // const x = newState.Column[action.payload.columnindex]!.Task[
-    //   action.payload.taskindex
-    // ]!.SubTask[action.payload.id]!.isCompleted as boolean;
-    // newState.Column[action.payload.columnindex]!.Task[
-    //   action.payload.taskindex
-    // ]!.SubTask[action.payload.id]!.isCompleted = !x;
-    // return newState;
-    return state;
+  }
+  if (action.type === "MOVE_TASK") {
+    const { newColumnIndex, columnindex, taskindex } = action.payload;
+    const newState = cloneDeep(state);
+    const task = newState.Column[columnindex]!.Task[taskindex];
+    console.log(task?.id);
+    if (task) {
+      task.statusName = newState.Column[newColumnIndex]!.name;
+      newState.Column[newColumnIndex]!.Task.push(task);
+      console.log("moved to", task.statusName);
+    }
+    newState.Column[columnindex]!.Task.splice(taskindex, 1);
+    return newState;
   }
   return state;
 }

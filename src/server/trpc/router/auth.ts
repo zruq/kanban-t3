@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../trpc";
 
 export const authRouter = router({
@@ -26,6 +27,7 @@ export const authRouter = router({
                 title: true,
                 description: true,
                 id: true,
+                statusName: true,
                 SubTask: {
                   select: { id: true, title: true, isCompleted: true },
                 },
@@ -36,29 +38,41 @@ export const authRouter = router({
       },
     });
   }),
-  getData: protectedProcedure.query(({ ctx }) => {
+  getBoardsList: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.board.findMany({
       where: { userId: ctx.session.user.id },
-      select: {
-        name: true,
-        id: true,
-        Column: {
-          select: {
-            name: true,
-            id: true,
-            Task: {
-              select: {
-                title: true,
-                description: true,
-                id: true,
-                SubTask: {
-                  select: { id: true, title: true, isCompleted: true },
+      select: { id: true, name: true },
+      orderBy: { updatedAt: "desc" },
+    });
+  }),
+  getBoardById: protectedProcedure
+    .input(z.object({ id: z.number().optional() }))
+    .query(({ input, ctx }) => {
+      return ctx.prisma.board.findFirst({
+        where: { id: input.id, userId: ctx.session.user.id },
+        select: {
+          id: true,
+          name: true,
+          Column: {
+            orderBy: { createdAt: "asc" },
+            select: {
+              name: true,
+              id: true,
+              Task: {
+                orderBy: { createdAt: "asc" },
+                select: {
+                  title: true,
+                  description: true,
+                  statusName: true,
+                  id: true,
+                  SubTask: {
+                    select: { id: true, title: true, isCompleted: true },
+                  },
                 },
               },
             },
           },
         },
-      },
-    });
-  }),
+      });
+    }),
 });

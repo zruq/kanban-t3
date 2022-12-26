@@ -1,22 +1,38 @@
-import type { Dispatch } from "react";
+import type { DetailedHTMLProps, Dispatch, HTMLAttributes } from "react";
 import type { Action } from "../../state/action";
 
 type CheckboxProps = {
   title: string;
   isCompleted: boolean;
   dispatch: Dispatch<Action>;
-};
+  indices: {
+    taskindex: number;
+    columnindex: number;
+    index: number;
+  };
+} & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
-const Checkbox = ({ dispatch, title, isCompleted }: CheckboxProps) => {
+const Checkbox = ({
+  indices,
+  dispatch,
+  title,
+  isCompleted,
+  className,
+  ...props
+}: CheckboxProps) => {
   return (
     <div
+      {...props}
       onClick={() =>
         dispatch({
           type: "TOGGLE_SUBTASK",
-          payload: { columnindex: 0, index: 1, taskindex: 0 },
+          payload: indices,
         })
       }
-      className="tablet:w-[26rem] flex w-[18.43rem] cursor-pointer rounded-[4px] bg-lightGrey p-3 hover:bg-purple hover:bg-opacity-25 dark:bg-veryDarkGrey dark:hover:bg-purple dark:hover:bg-opacity-25"
+      className={
+        "flex w-[18.43rem] cursor-pointer rounded-[4px] bg-lightGrey p-3 hover:bg-purple hover:bg-opacity-25 dark:bg-veryDarkGrey dark:hover:bg-purple dark:hover:bg-opacity-25 tablet:w-[26rem] " +
+        className
+      }
     >
       <Box isCompleted={isCompleted} />
       <div

@@ -7,6 +7,7 @@ import Checkbox from "./shared/Checkbox";
 import Dropdown from "./shared/Dropdown";
 import TextField from "./shared/TextField";
 import Sidebar from "./Sidebar";
+import TaskCard from "./TaskCard";
 
 type AppProps = {
   initBoard: QBoard;
@@ -17,15 +18,21 @@ type AppProps = {
 const App = ({ initBoard, isLight, setIsLight }: AppProps) => {
   const [appState, dispatch] = useReducer(reducer, initBoard);
   //   const [appState, setAppState] = useState(initBoard);
-  console.log("stito", appState);
   return (
     <>
       <div className="h-screen w-full">
         <main
-          className={` h-full w-full bg-lightGrey dark:bg-darkGrey
+          className={` dark:bg-veryDarkGreydarkGrey h-full w-full bg-lightGrey dark:bg-veryDarkGrey
            `}
         >
-          <div className="my-4">
+          <div className="p-10">
+            <TaskCard
+              numberOfCompletedSubtasks={0}
+              numberOfTotalSubtasks={3}
+              title="Build UI for onboarding flow"
+            />
+          </div>
+          {/* <div className="my-4">
             <Button cType="primaryS" onClick={() => setIsLight(!isLight)}>
               Button Primary (S)
             </Button>
@@ -63,7 +70,7 @@ const App = ({ initBoard, isLight, setIsLight }: AppProps) => {
           </div>
           <div className="p-4">
             <TextField />
-          </div>
+          </div> */}
         </main>
       </div>
     </>

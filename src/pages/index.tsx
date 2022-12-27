@@ -8,7 +8,6 @@ import { useState } from "react";
 import App from "../Components/App";
 import type { QBoard } from "../server/trpc/router/_app";
 import Sidebar from "../Components/Sidebar";
-import Navbar from "../Components/Navbar";
 import Button from "../Components/shared/Button";
 
 const Home: NextPage = () => {
@@ -31,10 +30,9 @@ const Home: NextPage = () => {
     enabled: session.data?.user !== undefined,
   });
 
+  if (initBoard.isLoading) return <div className="">Loading</div>;
   // if (session.status === "loading" || session.status === "unauthenticated")
   //   return <div className="">auth</div>;
-
-  if (initBoard.isLoading) return <div className="">Loading</div>;
 
   return (
     <>
@@ -62,11 +60,16 @@ const Home: NextPage = () => {
             }`}
           >
             {/* Navbar */}
-            <Navbar
+            {/* <Navbar
               showSideBar={showSideBar}
               boardName={initBoard.data?.name ?? ""}
+              colsList={colsList}
+            /> */}
+            <App
+              showSideBar={showSideBar}
+              key={goToBoard}
+              board={initBoard.data as QBoard}
             />
-            <App key={goToBoard} board={initBoard.data as QBoard} />
           </div>
           {/* show sidebar */}
           {!showSideBar && (

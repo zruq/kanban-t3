@@ -14,10 +14,12 @@ export type Action =
 
 type AddTask = {
   type: "ADD_TASK";
-  payload:
-    | Omit<Task, "createdAt" | "updatedAt" | "id"> & {
-        subtasks: Omit<SubTask, "createdAt" | "updatedAt" | "id" | "taskId">[];
-      };
+  payload: {
+    title: string;
+    description: string;
+    status: string;
+    subtasks: string[];
+  };
 };
 
 type EditTask = {

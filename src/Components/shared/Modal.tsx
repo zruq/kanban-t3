@@ -5,15 +5,17 @@ import { TaskType } from "../ColumnCard";
 
 type ModalProps = {
   children: ReactNode;
-  setShowModal: Dispatch<
-    SetStateAction<
-      | boolean
-      | {
-          id: number;
-          index: number;
-        }
-    >
-  >;
+  setShowModal:
+    | Dispatch<
+        SetStateAction<
+          | boolean
+          | {
+              id: number;
+              index: number;
+            }
+        >
+      >
+    | Dispatch<SetStateAction<boolean>>;
 };
 const Modal = ({ children, setShowModal }: ModalProps) => {
   const elRef = useRef<HTMLDivElement | null>(null);
@@ -25,16 +27,10 @@ const Modal = ({ children, setShowModal }: ModalProps) => {
       modalRoot.removeChild(elRef.current as HTMLDivElement);
     };
   }, []);
-  //   useEffect(() => {
-  //     if (!isLight) {
-  //       document.getElementById("modal")?.classList.add("dark");
-  //     } else {
-  //       document.getElementById("modal")?.classList.remove("dark");
-  //     }
-  //   }, [isLight]);
+
   return createPortal(
     <div
-      className="absolute flex h-screen w-screen items-center justify-center overflow-auto bg-black bg-opacity-50"
+      className="absolute z-50 flex h-screen w-screen items-start justify-center overflow-auto bg-black bg-opacity-50 p-4"
       onClick={() => setShowModal(false)}
     >
       {children}

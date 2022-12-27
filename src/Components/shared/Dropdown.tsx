@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import type { Dispatch } from "react";
+import { useState } from "react";
+import type { SetStateAction, Dispatch } from "react";
 import type { Action } from "../../state/action";
 
 type DropdownProps = {
@@ -7,6 +7,8 @@ type DropdownProps = {
   currentColumn: string;
   indices: { taskindex: number; columnindex: number };
   dispatch: Dispatch<Action>;
+  active: boolean;
+  setActive: Dispatch<SetStateAction<boolean>>;
 };
 
 const Dropdown = ({
@@ -14,21 +16,13 @@ const Dropdown = ({
   columns,
   currentColumn,
   indices,
+  active,
+  setActive,
 }: DropdownProps) => {
-  const [active, setActive] = useState(false);
   const [currCol, setCurrCol] = useState(currentColumn);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
-  window.addEventListener("click", function (e) {
-    // if outside of dropdown
-    if (dropdownRef.current)
-      if (!dropdownRef.current.contains(e.target as Node)) {
-        setActive(false);
-      }
-  });
   return (
     <>
       <div
-        ref={dropdownRef}
         onClick={() => {
           setActive(!active);
         }}

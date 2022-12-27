@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .textInput {
+        @apply my-2 flex h-[40px]  w-full items-center justify-between rounded-[4px] border border-[#828FA3] border-opacity-25 bg-white bg-opacity-0 py-2  px-4 text-bodyl
+        text-black dark:text-white  outline-none dark:placeholder:opacity-25 placeholder:opacity-40 focus:border-purple;
+    }
+}

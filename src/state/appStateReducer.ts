@@ -4,7 +4,30 @@ import { cloneDeep } from "lodash";
 
 export default function reducer(state: QBoard, action: Action) {
   if (action.type === "ADD_TASK") {
-    return state;
+    return {
+      id: state.id,
+      name: state.name,
+      Column: state.Column.map((column) => {
+        if (column.name === action.payload.status) {
+          return {
+            id: column.id,
+            name: column.name,
+            Task: column.Task.concat([
+              {
+                id: 1000,
+                title: action.payload.title,
+                description: action.payload.description,
+                statusName: action.payload.status,
+                SubTask: action.payload.subtasks.map((subtask, index) => {
+                  return { id: index, isCompleted: false, title: subtask };
+                }),
+              },
+            ]),
+          };
+        }
+        return column;
+      }),
+    };
   }
   if (action.type === "TOGGLE_SUBTASK") {
     const { index, columnindex, taskindex } = action.payload;

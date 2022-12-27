@@ -5,15 +5,14 @@ type CheckboxProps = {
   title: string;
   isCompleted: boolean;
   dispatch: Dispatch<Action>;
-  indices: {
-    taskindex: number;
-    columnindex: number;
-    index: number;
+  ids: {
+    taskID: number;
+    subtaskID: number;
   };
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 const Checkbox = ({
-  indices,
+  ids,
   dispatch,
   title,
   isCompleted,
@@ -26,7 +25,7 @@ const Checkbox = ({
       onClick={() =>
         dispatch({
           type: "TOGGLE_SUBTASK",
-          payload: indices,
+          payload: { ...ids },
         })
       }
       className={

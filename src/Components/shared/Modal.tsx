@@ -1,20 +1,11 @@
 import { createPortal } from "react-dom";
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 import { useEffect, useRef } from "react";
-import { TaskType } from "../ColumnCard";
 
 type ModalProps = {
   children: ReactNode;
   setShowModal:
-    | Dispatch<
-        SetStateAction<
-          | boolean
-          | {
-              id: number;
-              index: number;
-            }
-        >
-      >
+    | Dispatch<SetStateAction<boolean | number>>
     | Dispatch<SetStateAction<boolean>>;
 };
 const Modal = ({ children, setShowModal }: ModalProps) => {

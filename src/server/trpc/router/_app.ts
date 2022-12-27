@@ -12,21 +12,23 @@ export type AppRouter = typeof appRouter;
 export type ReactQueryOptions = inferReactQueryProcedureOptions<AppRouter>;
 
 export type QBoard = {
-  Column: {
-    Task: {
-      SubTask: {
-        id: number;
-        title: string;
-        isCompleted: boolean;
-      }[];
-      id: number;
-      title: string;
-      description: string | null;
-      statusName: string;
-    }[];
-    id: number;
-    name: string;
-  }[];
   id: number;
   name: string;
+  tasks: {
+    SubTask: {
+      id: number;
+      title: string;
+      isCompleted: boolean;
+    }[];
+    id: number;
+    status: {
+      id: number;
+    };
+    title: string;
+    description: string | null;
+  }[];
+  columnsList: {
+    name: string;
+    id: number;
+  }[];
 };

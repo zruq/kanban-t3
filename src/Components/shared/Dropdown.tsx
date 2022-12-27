@@ -3,19 +3,19 @@ import type { SetStateAction, Dispatch } from "react";
 import type { Action } from "../../state/action";
 
 type DropdownProps = {
-  columns: { name: string; index: number }[];
-  currentColumn: string;
-  indices: { taskindex: number; columnindex: number };
+  columns: { name: string; id: number }[];
+  currentColumn: number;
   dispatch: Dispatch<Action>;
   active: boolean;
   setActive: Dispatch<SetStateAction<boolean>>;
+  taskID: number;
 };
 
 const Dropdown = ({
+  taskID,
   dispatch,
   columns,
   currentColumn,
-  indices,
   active,
   setActive,
 }: DropdownProps) => {
@@ -30,7 +30,9 @@ const Dropdown = ({
           active ? "border-purple" : "border-[#828FA3] border-opacity-25"
         }  py-2 px-4`}
       >
-        <div className="text-bodyl text-black dark:text-white">{currCol}</div>
+        <div className="text-bodyl text-black dark:text-white">
+          {columns.find((col) => col.id === currCol)?.name}
+        </div>
         <svg width="10" height="7" xmlns="http://www.w3.org/2000/svg">
           <path stroke="#635FC7" strokeWidth="2" fill="none" d="m1 1 4 4 4-4" />
         </svg>
@@ -42,13 +44,10 @@ const Dropdown = ({
           {columns.map((col) => (
             <li
               onClick={() => {
-                setCurrCol(col.name);
+                setCurrCol(col.id);
                 dispatch({
                   type: "MOVE_TASK",
-                  payload: {
-                    ...indices,
-                    newColumnIndex: col.index,
-                  },
+                  payload: { taskID, newColumnID: col.id },
                 });
                 setActive(false);
               }}

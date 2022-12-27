@@ -9,7 +9,6 @@ const NewTask = ({
   cols,
   dispatch,
   setShowModal,
-  boardId,
 }: {
   cols: string[];
   dispatch: Dispatch<Action>;

@@ -1,57 +1,68 @@
 import type { QBoard } from "../server/trpc/router/_app";
 import type { Action } from "./action";
-import { cloneDeep } from "lodash";
 
-export default function reducer(state: QBoard, action: Action) {
-  if (action.type === "ADD_TASK") {
-    const { task } = action.payload;
+export default function reducer(state: QBoard, action: Action): QBoard {
+  if (action.type === "TOGGLE_SUBTASK") {
+    const { taskID, subtaskID } = action.payload;
     return {
-      id: state.id,
-      name: state.name,
-      Column: state.Column.map((column) => {
-        if (column.name === task.statusName) {
+      ...state,
+      tasks: state?.tasks.map((task) => {
+        if (task.id === taskID)
           return {
-            id: column.id,
-            name: column.name,
-            Task: column.Task.concat([
-              {
-                id: task.id,
-                description: task.description,
-                statusName: task.statusName,
-                SubTask: task.SubTask,
-                title: task.title,
-              },
-            ]),
+            ...task,
+            SubTask: task.SubTask.map((subtask) => {
+              if (subtask.id === subtaskID) {
+                return { ...subtask, isCompleted: !subtask.isCompleted };
+              }
+              return subtask;
+            }),
           };
-        }
-        return column;
+        return task;
       }),
     };
   }
-  if (action.type === "TOGGLE_SUBTASK") {
-    const { index, columnindex, taskindex } = action.payload;
-    // const newState = JSON.parse(JSON.stringify(state)) as QBoard;
-    const newState = cloneDeep(state);
-    console.log("from reducer", newState);
-    const isSubTaskCompleted =
-      newState.Column[columnindex]!.Task[taskindex]!.SubTask[index]!
-        .isCompleted;
-    newState.Column[columnindex]!.Task[taskindex]!.SubTask[index]!.isCompleted =
-      !isSubTaskCompleted;
-    return newState;
-  }
   if (action.type === "MOVE_TASK") {
-    const { newColumnIndex, columnindex, taskindex } = action.payload;
-    const newState = cloneDeep(state);
-    const task = newState.Column[columnindex]!.Task[taskindex];
-    console.log(task?.id);
-    if (task) {
-      task.statusName = newState.Column[newColumnIndex]!.name;
-      newState.Column[newColumnIndex]!.Task.push(task);
-      console.log("moved to", task.statusName);
-    }
-    newState.Column[columnindex]!.Task.splice(taskindex, 1);
-    return newState;
+    const { taskID, newColumnID } = action.payload;
+    return {
+      ...state,
+      tasks: state?.tasks.map((task) => {
+        if (task.id === taskID)
+          return {
+            ...task,
+            status: { id: newColumnID },
+          };
+        return task;
+      }),
+    };
+  }
+  if (action.type === "ADD_TASK") {
+    const { task } = action.payload;
+    return { ...state, tasks: state.tasks.concat(task) };
   }
   return state;
+  // if (action.type === "TOGGLE_SUBTASK") {
+  //   const { index, columnindex, taskindex } = action.payload;
+  //   // const newState = JSON.parse(JSON.stringify(state)) as QBoard;
+  //   const newState = cloneDeep(state);
+  //   console.log("from reducer", newState);
+  //   const isSubTaskCompleted =
+  //     newState.Column[columnindex]!.Task[taskindex]!.SubTask[index]!
+  //       .isCompleted;
+  //   newState.Column[columnindex]!.Task[taskindex]!.SubTask[index]!.isCompleted =
+  //     !isSubTaskCompleted;
+  //   return newState;
+  // }
+  // if (action.type === "MOVE_TASK") {
+  //   const { newColumnIndex, columnindex, taskindex } = action.payload;
+  //   const newState = cloneDeep(state);
+  //   const task = newState.Column[columnindex]!.Task[taskindex];
+  //   console.log(task?.id);
+  //   if (task) {
+  //     task.statusName = newState.Column[newColumnIndex]!.name;
+  //     newState.Column[newColumnIndex]!.Task.push(task);
+  //     console.log("moved to", task.statusName);
+  //   }
+  //   newState.Column[columnindex]!.Task.splice(taskindex, 1);
+  //   return newState;
+  // }
 }

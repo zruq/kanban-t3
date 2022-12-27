@@ -22,18 +22,18 @@ const Home: NextPage = () => {
   const [showSideBar, setShowSidebar] = useState(false);
   const [goToBoard, setGoToBoard] = useState<number | undefined>(undefined);
   const session = useSession();
-  const initBoard = trpc.auth.getBoardById.useQuery(
-    { id: goToBoard }, // no input
-    { enabled: session.data?.user !== undefined }
-  );
+
   const { data: boardsList } = trpc.auth.getBoardsList.useQuery(undefined, {
     enabled: session.data?.user !== undefined,
   });
+  const initBoard = trpc.auth.getNewBoardById.useQuery(
+    { id: goToBoard }, // no input
+    { enabled: session.data?.user !== undefined }
+  );
 
   if (initBoard.isLoading) return <div className="">Loading</div>;
   // if (session.status === "loading" || session.status === "unauthenticated")
   //   return <div className="">auth</div>;
-
   return (
     <>
       <Head>

@@ -6,23 +6,22 @@ import type {
 } from "react";
 import TaskCard from "./TaskCard";
 
-export type TaskType = {
-  SubTask: {
-    id: number;
-    title: string;
-    isCompleted: boolean;
-  }[];
-  id: number;
-  title: string;
-  description: string | null;
-  statusName: string;
-};
 type ColumnCardProps = {
-  setShowModal: Dispatch<
-    SetStateAction<boolean | { id: number; index: number }>
-  >;
+  setShowModal: Dispatch<SetStateAction<boolean | number>>;
   index: number;
-  tasks: TaskType[];
+  tasks: {
+    SubTask: {
+      id: number;
+      title: string;
+      isCompleted: boolean;
+    }[];
+    id: number;
+    status: {
+      id: number;
+    };
+    title: string;
+    description: string | null;
+  }[];
   name: string;
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
@@ -44,7 +43,7 @@ const ColumnCard = ({
         </div>
         {tasks.map((task, index) => (
           <TaskCard
-            onClick={() => setShowModal({ id: task.id, index })}
+            onClick={() => setShowModal(task.id)}
             key={task.id}
             numberOfCompletedSubtasks={
               task.SubTask.filter((subtask) => subtask.isCompleted).length

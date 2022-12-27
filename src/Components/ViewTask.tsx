@@ -6,24 +6,28 @@ import Dropdown from "./shared/Dropdown";
 import Card from "./shared/Card";
 
 type ViewTaskProps = {
-  indices: { taskindex: number; columnindex: number };
-  cols: { name: string; index: number }[];
-  task: {
-    SubTask: {
-      id: number;
-      title: string;
-      isCompleted: boolean;
-    }[];
-    id: number;
-    title: string;
-    statusName: string;
-    description: string | null;
-  };
+  cols: { name: string; id: number }[];
+  task:
+    | {
+        SubTask: {
+          id: number;
+          title: string;
+          isCompleted: boolean;
+        }[];
+        id: number;
+        status: {
+          id: number;
+        };
+        title: string;
+        description: string | null;
+      }
+    | undefined;
   dispatch: Dispatch<Action>;
 };
-const ViewTask = ({ cols, task, indices, dispatch }: ViewTaskProps) => {
+const ViewTask = ({ cols, task, dispatch }: ViewTaskProps) => {
   const [showSettings, setShowSettings] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  if (!task) return <></>;
   return (
     <Card
       onClick={(e) => {
@@ -67,13 +71,13 @@ const ViewTask = ({ cols, task, indices, dispatch }: ViewTaskProps) => {
         Subtasks ({task.SubTask.filter((subtask) => subtask.isCompleted).length}{" "}
         of {task.SubTask.length} )
       </h3>
-      {task.SubTask.map((subtask, index) => (
+      {task.SubTask.map((subtask) => (
         <Checkbox
           className="mb-2"
-          indices={{ ...indices, index }}
           isCompleted={subtask.isCompleted}
           key={subtask.id}
           title={subtask.title}
+          ids={{ taskID: task.id, subtaskID: subtask.id }}
           dispatch={dispatch}
         />
       ))}
@@ -83,8 +87,8 @@ const ViewTask = ({ cols, task, indices, dispatch }: ViewTaskProps) => {
       <Dropdown
         dispatch={dispatch}
         columns={cols}
-        currentColumn={task.statusName}
-        indices={indices}
+        currentColumn={task.status.id}
+        taskID={task.id}
         active={showDropdown}
         setActive={setShowDropdown}
       />

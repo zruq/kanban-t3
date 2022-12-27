@@ -12,7 +12,7 @@ type NavbarProps = {
   boardId: number;
   colsList: {
     name: string;
-    index: number;
+    id: number;
   }[];
 };
 const Navbar = ({

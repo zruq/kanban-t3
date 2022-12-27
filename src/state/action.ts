@@ -20,7 +20,7 @@ type AddTask = {
       id: number;
       title: string;
       description: string | null;
-      statusName: string;
+      status: { id: number };
     };
   };
 };
@@ -36,9 +36,8 @@ type EditTask = {
 type ToggleSubTask = {
   type: "TOGGLE_SUBTASK";
   payload: {
-    taskindex: number;
-    columnindex: number;
-    index: number;
+    taskID: number;
+    subtaskID: number;
   };
 };
 
@@ -53,9 +52,8 @@ type DeleteTask = {
 type MoveTask = {
   type: "MOVE_TASK";
   payload: {
-    columnindex: number;
-    taskindex: number;
-    newColumnIndex: number;
+    taskID: number;
+    newColumnID: number;
   };
 };
 

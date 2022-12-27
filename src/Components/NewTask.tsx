@@ -3,15 +3,18 @@ import type { Dispatch, SetStateAction } from "react";
 import type { Action } from "../state/action";
 import Button from "./shared/Button";
 import Card from "./shared/Card";
+import { trpc } from "../utils/trpc";
 
 const NewTask = ({
   cols,
   dispatch,
   setShowModal,
+  boardId,
 }: {
   cols: string[];
   dispatch: Dispatch<Action>;
   setShowModal: Dispatch<SetStateAction<boolean>>;
+  boardId: number;
 }) => {
   const [newTaskState, setNewTaskState] = useState({
     title: "",
@@ -20,6 +23,12 @@ const NewTask = ({
     subtasks: ["", ""],
   });
   const [showDropdown, setShowDropdown] = useState(false);
+  const mutation = trpc.auth.postNewTask.useMutation({
+    onSuccess: (data) => {
+      dispatch({ type: "ADD_TASK", payload: { task: data } });
+    },
+  });
+
   return (
     <Card
       onClick={(e) => {
@@ -105,6 +114,7 @@ recharge the batteries a little."
           className="mb-6 w-full"
           onClick={(e) => {
             e.preventDefault();
+
             setNewTaskState({
               ...newTaskState,
               subtasks: [...newTaskState.subtasks, ""],
@@ -167,7 +177,13 @@ recharge the batteries a little."
         <Button
           onClick={(e) => {
             e.preventDefault();
-            dispatch({ type: "ADD_TASK", payload: newTaskState });
+            mutation.mutate({
+              boardId: 1,
+              status: newTaskState.status,
+              title: newTaskState.title,
+              subtasks: newTaskState.subtasks,
+              description: newTaskState.description,
+            });
             setShowModal(false);
           }}
           cType="primaryS"

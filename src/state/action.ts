@@ -15,10 +15,13 @@ export type Action =
 type AddTask = {
   type: "ADD_TASK";
   payload: {
-    title: string;
-    description: string;
-    status: string;
-    subtasks: string[];
+    task: {
+      SubTask: SubTask[];
+      id: number;
+      title: string;
+      description: string | null;
+      statusName: string;
+    };
   };
 };
 

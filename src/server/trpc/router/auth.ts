@@ -75,4 +75,38 @@ export const authRouter = router({
         },
       });
     }),
+  postNewTask: protectedProcedure
+    .input(
+      z.object({
+        boardId: z.number(),
+        title: z.string(),
+        description: z.string().optional(),
+        status: z.string(),
+        subtasks: z.array(z.string()),
+      })
+    )
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.task.create({
+        data: {
+          title: input.title,
+          statusName: input.status,
+          boardId: input.boardId,
+          description: input.description,
+          SubTask: {
+            createMany: {
+              data: input.subtasks.map((subtask) => {
+                return { title: subtask };
+              }),
+            },
+          },
+        },
+        select: {
+          id: true,
+          statusName: true,
+          description: true,
+          SubTask: true,
+          title: true,
+        },
+      });
+    }),
 });

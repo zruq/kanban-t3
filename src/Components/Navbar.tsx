@@ -9,12 +9,14 @@ type NavbarProps = {
   dispatch: Dispatch<Action>;
   showSideBar: boolean;
   boardName: string;
+  boardId: number;
   colsList: {
     name: string;
     index: number;
   }[];
 };
 const Navbar = ({
+  boardId,
   showSideBar,
   dispatch,
   boardName,
@@ -102,6 +104,7 @@ const Navbar = ({
       {showAddTask && (
         <Modal setShowModal={setShowAddTask}>
           <NewTask
+            boardId={boardId}
             setShowModal={setShowAddTask}
             cols={colsList.map((col) => col.name)}
             dispatch={dispatch}

@@ -104,9 +104,9 @@ const Navbar = ({
       {showAddTask && (
         <Modal setShowModal={setShowAddTask}>
           <NewTask
-            boardId={boardId}
+            boardID={boardId}
             setShowModal={setShowAddTask}
-            cols={colsList.map((col) => col.name)}
+            cols={colsList}
             dispatch={dispatch}
           />
         </Modal>

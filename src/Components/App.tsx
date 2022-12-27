@@ -32,13 +32,12 @@ const App = ({ board, showSideBar }: AppProps) => {
         colsList={appState.columnsList}
       />
       <main
-        className={`h-full  overflow-auto bg-lightGrey dark:bg-veryDarkGrey`}
+        className={`h-full overflow-auto  bg-lightGrey pb-12 dark:bg-veryDarkGrey`}
       >
         <div className="flex items-start justify-start p-10">
-          {appState.columnsList.map((col, index) => (
+          {appState.columnsList.map((col) => (
             <ColumnCard
               setShowModal={setShowModal}
-              index={index}
               className="mr-6 w-[17.5rem]"
               key={col.id}
               tasks={appState.tasks.filter((task) => task.status.id === col.id)}
@@ -49,6 +48,7 @@ const App = ({ board, showSideBar }: AppProps) => {
         {isNumber(showModal) && (
           <Modal setShowModal={setShowModal}>
             <ViewTask
+              boardID={appState.id}
               task={appState.tasks.find((twisk) => twisk.id === showModal)}
               dispatch={dispatch}
               cols={appState.columnsList}

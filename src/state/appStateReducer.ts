@@ -39,6 +39,16 @@ export default function reducer(state: QBoard, action: Action): QBoard {
     const { task } = action.payload;
     return { ...state, tasks: state.tasks.concat(task) };
   }
+  if (action.type === "EDIT_TASK") {
+    const { task, taskID } = action.payload;
+    return {
+      ...state,
+      tasks: state.tasks.map((twisk) => {
+        if (twisk.id === taskID) return task;
+        return twisk;
+      }),
+    };
+  }
   return state;
   // if (action.type === "TOGGLE_SUBTASK") {
   //   const { index, columnindex, taskindex } = action.payload;

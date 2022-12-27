@@ -1,4 +1,4 @@
-import type { SubTask, Task } from "@prisma/client";
+import type { SubTask } from "@prisma/client";
 import type { QBoard } from "../server/trpc/router/_app";
 
 export type Action =
@@ -27,10 +27,16 @@ type AddTask = {
 
 type EditTask = {
   type: "EDIT_TASK";
-  payload:
-    | Omit<Task, "createdAt" | "updatedAt"> & {
-        subtasks: Omit<SubTask, "createdAt" | "updatedAt" | "id" | "taskId">[];
-      };
+  payload: {
+    task: {
+      SubTask: SubTask[];
+      id: number;
+      title: string;
+      description: string | null;
+      status: { id: number };
+    };
+    taskID: number;
+  };
 };
 
 type ToggleSubTask = {

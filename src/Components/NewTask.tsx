@@ -5,26 +5,63 @@ import Button from "./shared/Button";
 import Card from "./shared/Card";
 import { trpc } from "../utils/trpc";
 
+type NewTaskProps = {
+  cols: { name: string; id: number }[];
+  dispatch: Dispatch<Action>;
+  setShowModal: Dispatch<SetStateAction<boolean>>;
+  boardID: number;
+  task?: {
+    SubTask: {
+      id?: number;
+      title: string;
+    }[];
+    id: number;
+    status: {
+      id: number;
+    };
+    title: string;
+    description: string | null;
+  };
+};
 const NewTask = ({
   cols,
   dispatch,
   setShowModal,
-}: {
-  cols: string[];
-  dispatch: Dispatch<Action>;
-  setShowModal: Dispatch<SetStateAction<boolean>>;
-  boardId: number;
-}) => {
-  const [newTaskState, setNewTaskState] = useState({
-    title: "",
-    description: "",
-    status: cols[0] as string,
-    subtasks: ["", ""],
-  });
+  task,
+  boardID,
+}: NewTaskProps) => {
+  const [newTaskState, setNewTaskState] = useState(
+    task
+      ? {
+          title: task?.title as string,
+          description: task?.description as string | undefined,
+          subtasks: task?.SubTask,
+          status: cols.filter((col) => col.id === task?.status.id)[0]
+            ?.name as string,
+        }
+      : {
+          title: "",
+          description: "",
+          status: cols[0]?.name as string,
+          subtasks: [
+            { title: "", id: undefined },
+            { title: "", id: undefined },
+          ],
+        }
+  );
   const [showDropdown, setShowDropdown] = useState(false);
   const mutation = trpc.auth.postNewTask.useMutation({
     onSuccess: (data) => {
       dispatch({ type: "ADD_TASK", payload: { task: data } });
+    },
+  });
+  const editTaskMutation = trpc.auth.editTask.useMutation({
+    onSuccess: (data) => {
+      if (task)
+        dispatch({
+          type: "EDIT_TASK",
+          payload: { task: data, taskID: task.id },
+        });
     },
   });
 
@@ -37,7 +74,7 @@ const NewTask = ({
     >
       <form>
         <h2 className="pb-6 text-hl text-black dark:text-white">
-          Add New Task
+          {task ? "Edit Task" : "Add New Task"}
         </h2>
         <label className="text-hs tracking-normal text-mediumGrey dark:text-white">
           Title
@@ -73,13 +110,14 @@ recharge the batteries a little."
                     : "e.g. Drink coffee & smile"
                 }
                 className={`textInput my-0 mr-4 `}
-                value={subtask}
+                value={subtask.title}
                 onChange={(e) =>
                   setNewTaskState({
                     ...newTaskState,
                     subtasks: newTaskState.subtasks.map(
                       (subtaskie, indexie) => {
-                        if (indexie === index) return e.target.value;
+                        if (indexie === index)
+                          return { ...subtaskie, title: e.target.value };
                         return subtaskie;
                       }
                     ),
@@ -116,7 +154,7 @@ recharge the batteries a little."
 
             setNewTaskState({
               ...newTaskState,
-              subtasks: [...newTaskState.subtasks, ""],
+              subtasks: [...newTaskState.subtasks, { title: "" }],
             });
           }}
         >
@@ -160,13 +198,13 @@ recharge the batteries a little."
               {cols.map((col) => (
                 <li
                   onClick={() => {
-                    setNewTaskState({ ...newTaskState, status: col });
+                    setNewTaskState({ ...newTaskState, status: col.name });
                     setShowDropdown(false);
                   }}
-                  key={col}
+                  key={col.id}
                   className="mb-2 cursor-pointer text-bodyl capitalize text-mediumGrey hover:text-black dark:hover:text-white"
                 >
-                  {col}
+                  {col.name}
                 </li>
               ))}
             </ul>
@@ -176,20 +214,45 @@ recharge the batteries a little."
         <Button
           onClick={(e) => {
             e.preventDefault();
-            mutation.mutate({
-              boardId: 1,
-              status: newTaskState.status,
-              title: newTaskState.title,
-              subtasks: newTaskState.subtasks,
-              description: newTaskState.description,
-            });
+            if (!task)
+              mutation.mutate({
+                boardID: boardID,
+                status: newTaskState.status,
+                title: newTaskState.title,
+                subtasks: newTaskState.subtasks.map((subtask) => subtask.title),
+                description: newTaskState.description,
+              });
+            else {
+              editTaskMutation.mutate({
+                taskID: task.id,
+                boardID: boardID,
+                status: newTaskState.status,
+                title: newTaskState.title,
+                subtasks: newTaskState.subtasks,
+                description: newTaskState.description,
+              });
+              // dispatch({
+              //   type: "EDIT_TASK",
+              //   payload: {
+              //     task: {
+              //       status: {id: cols.filter(
+              //         (col) => col.name === newTaskState.status
+              //       )[0]?.id as number },
+              //       title: newTaskState.title,
+              //       subtasks: newTaskState.subtasks,
+              //       description: newTaskState.description || null,
+              //     },
+              //     taskID: task.id,
+              //   },
+              // });
+            }
             setShowModal(false);
           }}
           cType="primaryS"
           className="my-0 mt-6 w-full"
           type="submit"
         >
-          Create Task
+          {task ? "Save Changes" : "Create Task"}
         </Button>
       </form>
     </Card>

@@ -89,7 +89,7 @@ export const authRouter = router({
   postNewTask: protectedProcedure
     .input(
       z.object({
-        boardId: z.number(),
+        boardID: z.number(),
         title: z.string(),
         description: z.string().optional(),
         status: z.string(),
@@ -101,7 +101,7 @@ export const authRouter = router({
         data: {
           title: input.title,
           statusName: input.status,
-          boardId: input.boardId,
+          boardId: input.boardID,
           description: input.description,
           SubTask: {
             createMany: {
@@ -134,6 +134,49 @@ export const authRouter = router({
       return ctx.prisma.task.update({
         where: { id: input.taskID },
         data: { status: { connect: { id: input.newColumnID } } },
+      });
+    }),
+  editTask: protectedProcedure
+    .input(
+      z.object({
+        taskID: z.number(),
+        boardID: z.number(),
+        title: z.string(),
+        description: z.string().optional(),
+        status: z.string(),
+        subtasks: z.array(
+          z.object({ title: z.string(), id: z.number().optional() })
+        ),
+      })
+    )
+    .mutation(({ input, ctx }) => {
+      const subtasksToUpdate = input.subtasks.filter((subtask) => !subtask.id);
+      subtasksToUpdate.forEach((subtask) => {
+        ctx.prisma.subTask.update({
+          where: { id: subtask.id },
+          data: { title: subtask.title },
+        });
+      });
+      const subtasksToCreate = input.subtasks.filter((subtask) => !subtask.id);
+      return ctx.prisma.task.update({
+        where: { id: input.taskID },
+        select: {
+          id: true,
+          status: { select: { id: true } },
+          description: true,
+          SubTask: true,
+          title: true,
+        },
+        data: {
+          title: input.title,
+          description: input.description,
+          status: {
+            connect: {
+              name_boardId: { boardId: input.boardID, name: input.status },
+            },
+          },
+          SubTask: { createMany: { data: subtasksToCreate } },
+        },
       });
     }),
 });

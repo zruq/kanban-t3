@@ -8,7 +8,6 @@ import TaskCard from "./TaskCard";
 
 type ColumnCardProps = {
   setShowModal: Dispatch<SetStateAction<boolean | number>>;
-  index: number;
   tasks: {
     SubTask: {
       id: number;
@@ -41,7 +40,7 @@ const ColumnCard = ({
             {name} ({tasks.length})
           </h2>
         </div>
-        {tasks.map((task, index) => (
+        {tasks.map((task) => (
           <TaskCard
             onClick={() => setShowModal(task.id)}
             key={task.id}

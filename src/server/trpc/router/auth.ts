@@ -1,4 +1,4 @@
-import { flatten, flattenDeep, keyBy } from "lodash";
+import { flatten } from "lodash";
 import { z } from "zod";
 import { router, publicProcedure, protectedProcedure } from "../trpc";
 
@@ -118,6 +118,22 @@ export const authRouter = router({
           SubTask: true,
           title: true,
         },
+      });
+    }),
+  toggleSubtask: protectedProcedure
+    .input(z.object({ id: z.number(), value: z.boolean() }))
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.subTask.update({
+        where: { id: input.id },
+        data: { isCompleted: input.value },
+      });
+    }),
+  moveTask: protectedProcedure
+    .input(z.object({ taskID: z.number(), newColumnID: z.number() }))
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.task.update({
+        where: { id: input.taskID },
+        data: { status: { connect: { id: input.newColumnID } } },
       });
     }),
 });

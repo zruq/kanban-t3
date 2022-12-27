@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { SetStateAction, Dispatch } from "react";
 import type { Action } from "../../state/action";
+import { trpc } from "../../utils/trpc";
 
 type DropdownProps = {
   columns: { name: string; id: number }[];
@@ -20,6 +21,8 @@ const Dropdown = ({
   setActive,
 }: DropdownProps) => {
   const [currCol, setCurrCol] = useState(currentColumn);
+  const mutation = trpc.auth.moveTask.useMutation();
+
   return (
     <>
       <div
@@ -45,6 +48,7 @@ const Dropdown = ({
             <li
               onClick={() => {
                 setCurrCol(col.id);
+                mutation.mutate({ newColumnID: col.id, taskID });
                 dispatch({
                   type: "MOVE_TASK",
                   payload: { taskID, newColumnID: col.id },

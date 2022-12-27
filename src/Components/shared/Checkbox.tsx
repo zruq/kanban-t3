@@ -1,5 +1,6 @@
 import type { DetailedHTMLProps, Dispatch, HTMLAttributes } from "react";
 import type { Action } from "../../state/action";
+import { trpc } from "../../utils/trpc";
 
 type CheckboxProps = {
   title: string;
@@ -19,15 +20,17 @@ const Checkbox = ({
   className,
   ...props
 }: CheckboxProps) => {
+  const mutation = trpc.auth.toggleSubtask.useMutation();
   return (
     <div
       {...props}
-      onClick={() =>
+      onClick={() => {
+        mutation.mutate({ id: ids.subtaskID, value: !isCompleted });
         dispatch({
           type: "TOGGLE_SUBTASK",
           payload: { ...ids },
-        })
-      }
+        });
+      }}
       className={
         "flex w-[18.43rem] cursor-pointer rounded-[4px] bg-lightGrey p-3 hover:bg-purple hover:bg-opacity-25 dark:bg-veryDarkGrey dark:hover:bg-purple dark:hover:bg-opacity-25 tablet:w-[26rem] " +
         className

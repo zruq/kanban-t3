@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import type { Action } from "../state/action";
 import Button from "./shared/Button";
 import Card from "./shared/Card";
 import { trpc } from "../utils/trpc";
+import type { Action } from "../state/reducer";
 
 type NewTaskProps = {
   cols: { name: string; id: number }[];
@@ -22,7 +22,7 @@ type NewTaskProps = {
       id: number;
     };
     title: string;
-    description: string | undefined;
+    description: string | null;
   };
 };
 const NewTask = ({
@@ -54,18 +54,21 @@ const NewTask = ({
   const [showDropdown, setShowDropdown] = useState(false);
   const mutation = trpc.auth.postNewTask.useMutation({
     onSuccess: (data) => {
-      dispatch({ type: "ADD_TASK", payload: { task: data } });
+      dispatch({ type: "ADD_TASK", payload: { task: data, boardID } });
     },
   });
-  const editTaskMutation = trpc.auth.editTask.useMutation({
-    onSuccess: (data) => {
-      if (task)
-        dispatch({
-          type: "EDIT_TASK",
-          payload: { task: data, taskID: task.id },
-        });
-    },
-  });
+  const editTaskMutation = trpc.auth.editTask
+    .useMutation
+    //   {
+    //   onSuccess: (data) => {
+    //     // if (task)
+    //     //   dispatch({
+    //     //     type: "EDIT_TASK",
+    //     //     payload: { task: data, taskID: task.id },
+    //     //   });
+    //   },
+    // }
+    ();
 
   return (
     <Card
@@ -102,7 +105,7 @@ recharge the batteries a little."
           />
         </label>
         <label className="text-hs tracking-normal text-mediumGrey dark:text-white">
-          Subtasks
+          <div className="mt-6 pb-2"> Subtasks </div>
           {newTaskState.subtasks.map((subtask, index) => (
             <div className="flex items-center justify-start pb-3" key={index}>
               <input
@@ -233,20 +236,18 @@ recharge the batteries a little."
                 subtasks: newTaskState.subtasks,
                 description: newTaskState.description,
               });
-              // dispatch({
-              //   type: "EDIT_TASK",
-              //   payload: {
-              //     task: {
-              //       status: {id: cols.filter(
-              //         (col) => col.name === newTaskState.status
-              //       )[0]?.id as number },
-              //       title: newTaskState.title,
-              //       subtasks: newTaskState.subtasks,
-              //       description: newTaskState.description || null,
-              //     },
-              //     taskID: task.id,
-              //   },
-              // });
+              dispatch({
+                type: "EDIT_TASK",
+                payload: {
+                  taskID: task.id,
+                  boardID: boardID,
+                  status: cols.find((col) => col.name === newTaskState.status)
+                    ?.id as number,
+                  title: newTaskState.title,
+                  subtasks: newTaskState.subtasks,
+                  description: newTaskState.description,
+                },
+              });
             }
             setShowModal(false);
           }}

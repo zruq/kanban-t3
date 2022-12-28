@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { SetStateAction, Dispatch } from "react";
-import type { Action } from "../../state/action";
+import type { Action } from "../../state/reducer";
 import { trpc } from "../../utils/trpc";
 
 type DropdownProps = {
@@ -10,9 +10,11 @@ type DropdownProps = {
   active: boolean;
   setActive: Dispatch<SetStateAction<boolean>>;
   taskID: number;
+  boardID: number;
 };
 
 const Dropdown = ({
+  boardID,
   taskID,
   dispatch,
   columns,
@@ -51,7 +53,7 @@ const Dropdown = ({
                 mutation.mutate({ newColumnID: col.id, taskID });
                 dispatch({
                   type: "MOVE_TASK",
-                  payload: { taskID, newColumnID: col.id },
+                  payload: { taskID, newColumnID: col.id, boardID },
                 });
                 setActive(false);
               }}

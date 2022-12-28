@@ -1,5 +1,5 @@
 import type { DetailedHTMLProps, Dispatch, HTMLAttributes } from "react";
-import type { Action } from "../../state/action";
+import type { Action } from "../../state/reducer";
 import { trpc } from "../../utils/trpc";
 
 type CheckboxProps = {
@@ -9,6 +9,7 @@ type CheckboxProps = {
   ids: {
     taskID: number;
     subtaskID: number;
+    boardID: number;
   };
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
@@ -28,7 +29,7 @@ const Checkbox = ({
         mutation.mutate({ id: ids.subtaskID, value: !isCompleted });
         dispatch({
           type: "TOGGLE_SUBTASK",
-          payload: { ...ids },
+          payload: ids,
         });
       }}
       className={

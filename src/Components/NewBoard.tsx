@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import type { Action } from "../state/action";
 import Button from "./shared/Button";
 import Card from "./shared/Card";
-import { string } from "zod";
 import { trpc } from "../utils/trpc";
+import { AppStateContext } from "../state/appStateContext";
 
 type NewBoardProps = {
   board?: {
@@ -12,10 +11,12 @@ type NewBoardProps = {
     id?: number;
     columns: { name: string; id?: number }[];
   };
-  dispatch?: Dispatch<Action>;
+  setShowModal:
+    | Dispatch<SetStateAction<boolean>>
+    | Dispatch<SetStateAction<number | boolean>>;
 };
 
-const NewBoard = ({ board, dispatch }: NewBoardProps) => {
+const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
   const [boardState, setBoardState] = useState(
     board
       ? board
@@ -28,9 +29,21 @@ const NewBoard = ({ board, dispatch }: NewBoardProps) => {
           ],
         }
   );
+
+  const { dispatch } = useContext(AppStateContext);
   const mutation = trpc.auth.editBoard.useMutation({
     onSuccess: (data) => {
-      if (dispatch) dispatch({ type: "EDIT_BOARD", payload: data });
+      dispatch({
+        type: "EDIT_BOARD",
+        payload: { newBoard: data, id: board?.id as number },
+      });
+      setShowModal(false);
+    },
+  });
+  const newBoardMutation = trpc.auth.createBoard.useMutation({
+    onSuccess: (data) => {
+      dispatch({ type: "ADD_BOARD", payload: data });
+      setShowModal(false);
     },
   });
   return (
@@ -100,7 +113,6 @@ const NewBoard = ({ board, dispatch }: NewBoardProps) => {
           className="mb-6 w-full"
           onClick={(e) => {
             e.preventDefault();
-
             setBoardState({
               ...boardState,
               columns: [...boardState.columns, { name: "", id: undefined }],
@@ -121,6 +133,11 @@ const NewBoard = ({ board, dispatch }: NewBoardProps) => {
                 boardID: boardState.id as number,
                 columns: boardState.columns,
                 name: boardState.name,
+              });
+            } else {
+              newBoardMutation.mutate({
+                name: boardState.name,
+                columns: boardState.columns,
               });
             }
           }}

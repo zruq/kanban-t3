@@ -21,7 +21,11 @@ const TaskCard = ({
       }
     >
       <h2 className="pb-2 text-hm text-black dark:text-white">{title}</h2>
-      <p className="text-bodym font-bold text-mediumGrey">
+      <p
+        className={`text-bodym font-bold text-mediumGrey ${
+          numberOfTotalSubtasks === 0 ? "hidden" : ""
+        } `}
+      >
         {numberOfCompletedSubtasks} of {numberOfTotalSubtasks} subtasks{" "}
       </p>
     </div>

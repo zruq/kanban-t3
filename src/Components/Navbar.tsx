@@ -3,12 +3,14 @@ import type { Dispatch } from "react";
 import NewTask from "./NewTask";
 import Button from "./shared/Button";
 import Modal from "./shared/Modal";
-import type { Action } from "../state/action";
+
 import DeleteModal from "./DeleteModal";
 import NewBoard from "./NewBoard";
+import { trpc } from "../utils/trpc";
+import type { Action } from "../state/reducer";
 
 type NavbarProps = {
-  dispatch: Dispatch<Action>;
+  boardsList: { id: number; name: string }[];
   showSideBar: boolean;
   boardName: string;
   boardID: number;
@@ -16,16 +18,20 @@ type NavbarProps = {
     name: string;
     id: number;
   }[];
+  dispatch: Dispatch<Action>;
 };
 const Navbar = ({
+  dispatch,
+  boardsList,
   boardID,
   showSideBar,
-  dispatch,
   boardName,
   colsList,
 }: NavbarProps) => {
   const [showModal, setShowModal] = useState<boolean | number>(false);
   const [showSettings, setShowSettings] = useState(false);
+  const deleteMutation = trpc.auth.deleteBoard.useMutation();
+
   return (
     <>
       <div className="flex  h-16 w-full items-center justify-between border-b border-linesLight bg-white p-6 dark:border-linesDark dark:bg-darkGrey tablet:h-[5rem] desktop:h-[6rem]">
@@ -136,14 +142,18 @@ const Navbar = ({
             />
           ) : showModal === 2 ? (
             <NewBoard
-              dispatch={dispatch}
+              setShowModal={setShowModal}
               board={{ name: boardName, columns: colsList, id: boardID }}
             />
           ) : (
             <DeleteModal
               type="board"
               title={boardName}
-              onDelete={() => {}}
+              onDelete={() => {
+                const createNewBoard = Boolean(boardsList.length === 1);
+                deleteMutation.mutate({ id: boardID, createNewBoard });
+                dispatch({ type: "DELETE_BOARD", payload: boardID });
+              }}
               setShowModal={setShowModal}
             />
           )}

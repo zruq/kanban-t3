@@ -3,37 +3,28 @@ import Head from "next/head";
 // import Link from "next/link";
 import { useSession } from "next-auth/react";
 
-import { trpc } from "../utils/trpc";
-import { useState } from "react";
-import App from "../Components/App";
-import type { QBoard } from "../server/trpc/router/_app";
+import { useEffect, useState } from "react";
 import Sidebar from "../Components/Sidebar";
-import Button from "../Components/shared/Button";
+import App from "../Components/App";
+import AppStateProvider from "../state/appStateContext";
 
 const Home: NextPage = () => {
-  const [isLight, setIsLight] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      const isLight = localStorage.getItem("theme");
-      if (isLight) return JSON.parse(isLight);
-      localStorage.setItem("theme", "true");
-    }
-    return true;
-  });
-  const [showSideBar, setShowSidebar] = useState(false);
-  const [goToBoard, setGoToBoard] = useState<number | undefined>(undefined);
+  const [isLight, setIsLight] = useState<boolean>(true);
   const session = useSession();
+  const [showSideBar, setShowSidebar] = useState(false);
+  useEffect(() => {
+    setIsLight(() => {
+      const isLight = localStorage.getItem("theme");
+      if (isLight) return Boolean(JSON.parse(isLight));
+      localStorage.setItem("theme", "true");
 
-  const { data: boardsList } = trpc.auth.getBoardsList.useQuery(undefined, {
-    enabled: session.data?.user !== undefined,
-  });
-  const initBoard = trpc.auth.getBoardById.useQuery(
-    { id: goToBoard }, // no input
-    { enabled: session.data?.user !== undefined }
-  );
+      return true;
+    });
+  }, []);
 
-  if (initBoard.isLoading) return <div className="">Loading</div>;
-  // if (session.status === "loading" || session.status === "unauthenticated")
-  //   return <div className="">auth</div>;
+  if (session.status === "unauthenticated")
+    return <div className="">Login</div>;
+
   return (
     <>
       <Head>
@@ -43,50 +34,18 @@ const Home: NextPage = () => {
       </Head>
       <div className={`${isLight ? "" : "dark"} `}>
         <div id="modal"></div>
-        <div className={`flex  h-screen w-screen overflow-hidden`}>
-          {showSideBar && (
-            <Sidebar
-              setGoToBoard={setGoToBoard}
-              setShowSidebar={setShowSidebar}
-              currentBoard={initBoard.data?.name || ""}
-              boards={boardsList || [{ id: 1, name: "untitled-board" }]}
-              isLight={isLight}
-              setIsLight={setIsLight}
-            />
-          )}
-          <div
-            className={`h-full ${
-              showSideBar ? "w-[calc(100vw-300px)]" : "w-full"
-            }`}
-          >
-            {/* Navbar */}
-            {/* <Navbar
-              showSideBar={showSideBar}
-              boardName={initBoard.data?.name ?? ""}
-              colsList={colsList}
-            /> */}
-            <App
-              showSideBar={showSideBar}
-              key={goToBoard}
-              board={initBoard.data as QBoard}
-            />
+        <AppStateProvider>
+          <div className={`flex  h-screen w-screen overflow-hidden`}>
+            {showSideBar && (
+              <Sidebar
+                setShowSidebar={setShowSidebar}
+                isLight={isLight}
+                setIsLight={setIsLight}
+              />
+            )}
+            <App showSideBar={showSideBar} setShowSidebar={setShowSidebar} />
           </div>
-          {/* show sidebar */}
-          {!showSideBar && (
-            <Button
-              onClick={() => setShowSidebar(true)}
-              cType="primaryL"
-              className="fixed bottom-8 -left-1 rounded-l-none"
-            >
-              <svg width="16" height="11" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M15.815 4.434A9.055 9.055 0 0 0 8 0 9.055 9.055 0 0 0 .185 4.434a1.333 1.333 0 0 0 0 1.354A9.055 9.055 0 0 0 8 10.222c3.33 0 6.25-1.777 7.815-4.434a1.333 1.333 0 0 0 0-1.354ZM8 8.89A3.776 3.776 0 0 1 4.222 5.11 3.776 3.776 0 0 1 8 1.333a3.776 3.776 0 0 1 3.778 3.778A3.776 3.776 0 0 1 8 8.89Zm2.889-3.778a2.889 2.889 0 1 1-5.438-1.36 1.19 1.19 0 1 0 1.19-1.189H6.64a2.889 2.889 0 0 1 4.25 2.549Z"
-                  fill="#FFF"
-                />
-              </svg>
-            </Button>
-          )}
-        </div>
+        </AppStateProvider>
       </div>
     </>
   );

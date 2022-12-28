@@ -1,6 +1,5 @@
 import { useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import type { Action } from "../state/action";
 import Checkbox from "./shared/Checkbox";
 import Dropdown from "./shared/Dropdown";
 import Card from "./shared/Card";
@@ -8,6 +7,7 @@ import NewTask from "./NewTask";
 import DeleteModal from "./DeleteModal";
 import { isBoolean } from "lodash";
 import { trpc } from "../utils/trpc";
+import type { Action } from "../state/reducer";
 
 type ViewTaskProps = {
   boardID: number;
@@ -69,7 +69,7 @@ const ViewTask = ({
             </g>
           </svg>
           {showSettings && (
-            <ul className="absolute -right-[24%] top-[70%] min-w-[12rem] cursor-pointer rounded-lg bg-white p-4 text-bodyl  text-mediumGrey dark:bg-veryDarkGrey">
+            <ul className="absolute -right-[24%] top-[70%] z-50 min-w-[12rem] cursor-pointer rounded-lg bg-white p-4 text-bodyl  text-mediumGrey dark:bg-veryDarkGrey">
               <li
                 className="hover:text-black"
                 onClick={() => {
@@ -88,13 +88,19 @@ const ViewTask = ({
           )}
         </div>
         <p
-          className={`pb-6 text-bodyl text-mediumGrey ${
+          className={`text-bodyl text-mediumGrey ${
             task.description ? "" : "hidden"
           }`}
         >
           {task.description}
         </p>
-        <h3 className="pb-4 text-bodym font-bold text-black dark:text-white">
+        <h3
+          className={`pb-4 ${
+            task.description ? "pt-6" : ""
+          } text-bodym font-bold text-black dark:text-white ${
+            task.SubTask.length === 0 ? "hidden" : ""
+          } `}
+        >
           Subtasks (
           {task.SubTask.filter((subtask) => subtask.isCompleted).length} of{" "}
           {task.SubTask.length} )
@@ -105,7 +111,7 @@ const ViewTask = ({
             isCompleted={subtask.isCompleted}
             key={subtask.id}
             title={subtask.title}
-            ids={{ taskID: task.id, subtaskID: subtask.id }}
+            ids={{ taskID: task.id, subtaskID: subtask.id, boardID }}
             dispatch={dispatch}
           />
         ))}
@@ -117,6 +123,7 @@ const ViewTask = ({
           columns={cols}
           currentColumn={task.status.id}
           taskID={task.id}
+          boardID={boardID}
           active={showDropdown}
           setActive={setShowDropdown}
         />
@@ -136,7 +143,10 @@ const ViewTask = ({
         <DeleteModal
           onDelete={() => {
             deleteMutation.mutate(task.id);
-            dispatch({ type: "DELETE_TASK", payload: { id: task.id } });
+            dispatch({
+              type: "DELETE_TASK",
+              payload: { id: task.id, boardID: boardID },
+            });
             parentSetShowModal(false);
           }}
           type="task"

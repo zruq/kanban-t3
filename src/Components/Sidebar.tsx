@@ -1,27 +1,20 @@
 import type { Dispatch, SetStateAction } from "react";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AppStateContext } from "../state/appStateContext";
 import NewBoard from "./NewBoard";
 import Button from "./shared/Button";
 import LightToggle from "./shared/LightToggle";
 import Modal from "./shared/Modal";
 
 type SidebarProps = {
-  boards: { id: number; name: string }[];
-  currentBoard: string;
   isLight: boolean;
   setIsLight: Dispatch<SetStateAction<boolean>>;
   setShowSidebar: Dispatch<SetStateAction<boolean>>;
-  setGoToBoard: Dispatch<SetStateAction<number | undefined>>;
 };
-const Sidebar = ({
-  setGoToBoard,
-  setShowSidebar,
-  boards,
-  currentBoard,
-  isLight,
-  setIsLight,
-}: SidebarProps) => {
+const Sidebar = ({ setShowSidebar, isLight, setIsLight }: SidebarProps) => {
   const [showModal, setShowModal] = useState(false);
+  const { getNumberOfBoards, boardsList, getActiveBoardName, changeBoard } =
+    useContext(AppStateContext);
   return (
     <>
       <div className="flex h-screen w-[18.75rem] flex-col items-start justify-between border-r border-linesLight bg-white px-6 py-8 dark:border-linesDark dark:bg-darkGrey ">
@@ -60,13 +53,15 @@ const Sidebar = ({
           )}
           <div className="mt-[3.375rem]">
             <div className="pb-5 text-hs uppercase text-mediumGrey">
-              all boards ({boards.length})
+              all boards ({getNumberOfBoards()})
             </div>
-            <div className="-ml-[3.1rem] max-h-[calc(100vh-21rem)] overflow-x-hidden overflow-y-scroll ">
-              {boards.map((board) => (
+            <div className="-ml-[3.1rem] max-h-[calc(100vh-21rem)] overflow-y-auto overflow-x-hidden ">
+              {boardsList.map((board) => (
                 <Button
-                  onClick={() => setGoToBoard(board.id)}
-                  cType={currentBoard === board.name ? "primaryL" : "ghost"}
+                  onClick={() => changeBoard(board.id)}
+                  cType={
+                    getActiveBoardName() === board.name ? "primaryL" : "ghost"
+                  }
                   key={board.id}
                   className="group  flex w-[19rem] pl-14 capitalize"
                 >
@@ -74,7 +69,7 @@ const Sidebar = ({
                     width="16"
                     height="16"
                     className={`mr-4 mt-[0.12rem] h-4 w-4 ${
-                      currentBoard === board.name
+                      getActiveBoardName() === board.name
                         ? "fill-white"
                         : "fill-mediumGrey group-hover:fill-purple"
                     }  `}
@@ -126,7 +121,7 @@ const Sidebar = ({
       </div>
       {showModal && (
         <Modal setShowModal={setShowModal}>
-          <NewBoard />
+          <NewBoard setShowModal={setShowModal} />
         </Modal>
       )}
     </>

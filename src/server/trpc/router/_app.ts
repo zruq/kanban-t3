@@ -25,7 +25,7 @@ export type QBoard = {
       id: number;
     };
     title: string;
-    description: string | null;
+    description?: string;
   }[];
   columnsList: {
     name: string;

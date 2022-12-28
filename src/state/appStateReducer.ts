@@ -49,6 +49,12 @@ export default function reducer(state: QBoard, action: Action): QBoard {
       }),
     };
   }
+  if (action.type === "DELETE_TASK") {
+    return {
+      ...state,
+      tasks: state.tasks.filter((task) => task.id !== action.payload.id),
+    };
+  }
   return state;
   // if (action.type === "TOGGLE_SUBTASK") {
   //   const { index, columnindex, taskindex } = action.payload;

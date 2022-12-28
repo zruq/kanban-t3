@@ -8,7 +8,7 @@ import { trpc } from "../utils/trpc";
 type NewTaskProps = {
   cols: { name: string; id: number }[];
   dispatch: Dispatch<Action>;
-  setShowModal: Dispatch<SetStateAction<boolean>>;
+  setShowModal: Dispatch<SetStateAction<boolean | number>>;
   boardID: number;
   task?: {
     SubTask: {

@@ -26,7 +26,7 @@ const Home: NextPage = () => {
   const { data: boardsList } = trpc.auth.getBoardsList.useQuery(undefined, {
     enabled: session.data?.user !== undefined,
   });
-  const initBoard = trpc.auth.getNewBoardById.useQuery(
+  const initBoard = trpc.auth.getBoardById.useQuery(
     { id: goToBoard }, // no input
     { enabled: session.data?.user !== undefined }
   );

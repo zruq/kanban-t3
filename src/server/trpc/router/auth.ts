@@ -15,36 +15,6 @@ export const authRouter = router({
   }),
   getBoardById: protectedProcedure
     .input(z.object({ id: z.number().optional() }))
-    .query(({ input, ctx }) => {
-      return ctx.prisma.board.findFirst({
-        where: { id: input.id, userId: ctx.session.user.id },
-        select: {
-          id: true,
-          name: true,
-          Column: {
-            orderBy: { createdAt: "asc" },
-            select: {
-              name: true,
-              id: true,
-              Task: {
-                orderBy: { createdAt: "asc" },
-                select: {
-                  title: true,
-                  description: true,
-                  statusName: true,
-                  id: true,
-                  SubTask: {
-                    select: { id: true, title: true, isCompleted: true },
-                  },
-                },
-              },
-            },
-          },
-        },
-      });
-    }),
-  getNewBoardById: protectedProcedure
-    .input(z.object({ id: z.number().optional() }))
     .query(async ({ input, ctx }) => {
       const board = await ctx.prisma.board.findFirst({
         where: { id: input.id, userId: ctx.session.user.id },
@@ -136,6 +106,13 @@ export const authRouter = router({
         data: { status: { connect: { id: input.newColumnID } } },
       });
     }),
+  deleteTask: protectedProcedure
+    .input(z.number())
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.task.delete({
+        where: { id: input },
+      });
+    }),
   editTask: protectedProcedure
     .input(
       z.object({
@@ -150,9 +127,9 @@ export const authRouter = router({
       })
     )
     .mutation(({ input, ctx }) => {
-      const subtasksToUpdate = input.subtasks.filter((subtask) => !subtask.id);
-      subtasksToUpdate.forEach((subtask) => {
-        ctx.prisma.subTask.update({
+      const subtasksToUpdate = input.subtasks.filter((subtask) => subtask.id);
+      subtasksToUpdate.forEach(async (subtask) => {
+        await ctx.prisma.subTask.update({
           where: { id: subtask.id },
           data: { title: subtask.title },
         });

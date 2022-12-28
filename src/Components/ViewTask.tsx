@@ -1,11 +1,13 @@
 import { useState } from "react";
-import type { Dispatch } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import type { Action } from "../state/action";
 import Checkbox from "./shared/Checkbox";
 import Dropdown from "./shared/Dropdown";
 import Card from "./shared/Card";
-import Modal from "./shared/Modal";
 import NewTask from "./NewTask";
+import DeleteModal from "./DeleteModal";
+import { isBoolean } from "lodash";
+import { trpc } from "../utils/trpc";
 
 type ViewTaskProps = {
   boardID: number;
@@ -26,14 +28,22 @@ type ViewTaskProps = {
       }
     | undefined;
   dispatch: Dispatch<Action>;
+  parentSetShowModal: Dispatch<SetStateAction<number | boolean>>;
 };
-const ViewTask = ({ cols, task, dispatch, boardID }: ViewTaskProps) => {
+const ViewTask = ({
+  cols,
+  task,
+  dispatch,
+  boardID,
+  parentSetShowModal,
+}: ViewTaskProps) => {
   const [showSettings, setShowSettings] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [showEditTask, setShowEditTask] = useState(false);
+  const [showModal, setShowModal] = useState<boolean | number>(false);
+  const deleteMutation = trpc.auth.deleteTask.useMutation();
   if (!task) return <></>;
-  return (
-    <>
+  if (isBoolean(showModal))
+    return (
       <Card
         onClick={(e) => {
           e.stopPropagation();
@@ -62,11 +72,18 @@ const ViewTask = ({ cols, task, dispatch, boardID }: ViewTaskProps) => {
             <ul className="absolute -right-[24%] top-[70%] min-w-[12rem] cursor-pointer rounded-lg bg-white p-4 text-bodyl  text-mediumGrey dark:bg-veryDarkGrey">
               <li
                 className="hover:text-black"
-                onClick={() => setShowEditTask(true)}
+                onClick={() => {
+                  setShowModal(-1);
+                }}
               >
                 Edit Task
               </li>
-              <li className="pt-4 text-red hover:text-redHover">Delete Task</li>
+              <li
+                onClick={() => setShowModal(-2)}
+                className="pt-4 text-red hover:text-redHover"
+              >
+                Delete Task
+              </li>
             </ul>
           )}
         </div>
@@ -104,17 +121,29 @@ const ViewTask = ({ cols, task, dispatch, boardID }: ViewTaskProps) => {
           setActive={setShowDropdown}
         />
       </Card>
-      {showEditTask && (
-        <Modal setShowModal={setShowEditTask}>
-          <NewTask
-            boardID={boardID}
-            task={task}
-            cols={cols}
-            setShowModal={setShowEditTask}
-            dispatch={dispatch}
-          />
-        </Modal>
-      )}
+    );
+  return (
+    <>
+      {showModal === -1 ? (
+        <NewTask
+          boardID={boardID}
+          task={task}
+          cols={cols}
+          setShowModal={parentSetShowModal}
+          dispatch={dispatch}
+        />
+      ) : showModal === -2 ? (
+        <DeleteModal
+          onDelete={() => {
+            deleteMutation.mutate(task.id);
+            dispatch({ type: "DELETE_TASK", payload: { id: task.id } });
+            parentSetShowModal(false);
+          }}
+          type="task"
+          title={task.title}
+          setShowModal={parentSetShowModal}
+        />
+      ) : null}
     </>
   );
 };

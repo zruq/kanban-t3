@@ -50,7 +50,6 @@ type ToggleSubTask = {
 type DeleteTask = {
   type: "DELETE_TASK";
   payload: {
-    columnindex: number;
     id: number;
   };
 };

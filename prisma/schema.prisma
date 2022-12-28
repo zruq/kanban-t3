@@ -56,7 +56,7 @@ model SubTask {
   updatedAt   DateTime @updatedAt
   title       String
   isCompleted Boolean  @default(false)
-  mainTask    Task     @relation(fields: [taskId], references: [id])
+  mainTask    Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId      Int
 
   @@unique([title, taskId])

@@ -48,6 +48,7 @@ const App = ({ board, showSideBar }: AppProps) => {
         {isNumber(showModal) && (
           <Modal setShowModal={setShowModal}>
             <ViewTask
+              parentSetShowModal={setShowModal}
               boardID={appState.id}
               task={appState.tasks.find((twisk) => twisk.id === showModal)}
               dispatch={dispatch}

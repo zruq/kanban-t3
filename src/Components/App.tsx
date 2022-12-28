@@ -25,7 +25,7 @@ const App = ({ board, showSideBar }: AppProps) => {
   return (
     <>
       <Navbar
-        boardId={appState.id}
+        boardID={appState.id}
         dispatch={dispatch}
         showSideBar={showSideBar}
         boardName={appState.name}

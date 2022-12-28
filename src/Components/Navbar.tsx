@@ -4,25 +4,28 @@ import NewTask from "./NewTask";
 import Button from "./shared/Button";
 import Modal from "./shared/Modal";
 import type { Action } from "../state/action";
+import DeleteModal from "./DeleteModal";
+import NewBoard from "./NewBoard";
 
 type NavbarProps = {
   dispatch: Dispatch<Action>;
   showSideBar: boolean;
   boardName: string;
-  boardId: number;
+  boardID: number;
   colsList: {
     name: string;
     id: number;
   }[];
 };
 const Navbar = ({
-  boardId,
+  boardID,
   showSideBar,
   dispatch,
   boardName,
   colsList,
 }: NavbarProps) => {
-  const [showAddTask, setShowAddTask] = useState(false);
+  const [showModal, setShowModal] = useState<boolean | number>(false);
+  const [showSettings, setShowSettings] = useState(false);
   return (
     <>
       <div className="flex  h-16 w-full items-center justify-between border-b border-linesLight bg-white p-6 dark:border-linesDark dark:bg-darkGrey tablet:h-[5rem] desktop:h-[6rem]">
@@ -77,10 +80,10 @@ const Navbar = ({
             {boardName}
           </h1>
         </div>
-        <div className="flex items-center justify-evenly">
+        <div className="relative flex items-center justify-evenly">
           <Button
             onClick={() => {
-              setShowAddTask(true);
+              setShowModal(1);
             }}
             cType="primaryL"
             className="mr-4 block w-[10.25rem]"
@@ -88,6 +91,7 @@ const Navbar = ({
             + Add New Task
           </Button>
           <svg
+            onClick={() => setShowSettings(!showSettings)}
             width="5"
             height="20"
             xmlns="http://www.w3.org/2000/svg"
@@ -99,16 +103,50 @@ const Navbar = ({
               <circle cx="2.308" cy="17.692" r="2.308" />
             </g>
           </svg>
+          {showSettings && (
+            <ul className="absolute right-[1.5%] top-[130%] min-w-[12rem] cursor-pointer rounded-lg bg-white p-4 text-bodyl  text-mediumGrey dark:bg-veryDarkGrey">
+              <li
+                className="hover:text-black"
+                onClick={() => {
+                  setShowModal(2);
+                }}
+              >
+                Edit Board
+              </li>
+              <li
+                onClick={() => {
+                  setShowModal(3);
+                }}
+                className="pt-4 text-red hover:text-redHover"
+              >
+                Delete Board
+              </li>
+            </ul>
+          )}
         </div>
       </div>
-      {showAddTask && (
-        <Modal setShowModal={setShowAddTask}>
-          <NewTask
-            boardID={boardId}
-            setShowModal={setShowAddTask}
-            cols={colsList}
-            dispatch={dispatch}
-          />
+      {showModal && (
+        <Modal setShowModal={setShowModal}>
+          {showModal === 1 ? (
+            <NewTask
+              boardID={boardID}
+              setShowModal={setShowModal}
+              cols={colsList}
+              dispatch={dispatch}
+            />
+          ) : showModal === 2 ? (
+            <NewBoard
+              dispatch={dispatch}
+              board={{ name: boardName, columns: colsList, id: boardID }}
+            />
+          ) : (
+            <DeleteModal
+              type="board"
+              title={boardName}
+              onDelete={() => {}}
+              setShowModal={setShowModal}
+            />
+          )}
         </Modal>
       )}
     </>

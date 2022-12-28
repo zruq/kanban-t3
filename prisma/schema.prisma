@@ -42,7 +42,7 @@ model Task {
   updatedAt   DateTime  @updatedAt
   title       String    @db.VarChar(255)
   description String?
-  status      Column    @relation(fields: [statusName, boardId], references: [name, boardId])
+  status      Column    @relation(fields: [statusName, boardId], references: [name, boardId], onDelete: Cascade)
   boardId     Int
   statusName  String
   SubTask     SubTask[]

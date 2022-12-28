@@ -71,11 +71,7 @@ type DeleteBoard = {
 
 type EditBoard = {
   type: "EDIT_BOARD";
-  payload: {
-    id: number;
-    name: string;
-    columns: string[];
-  };
+  payload: QBoard;
 };
 
 type AddBoard = {

@@ -113,6 +113,75 @@ export const authRouter = router({
         where: { id: input },
       });
     }),
+  editBoard: protectedProcedure
+    .input(
+      z.object({
+        boardID: z.number(),
+        name: z.string(),
+        columns: z.array(
+          z.object({ name: z.string(), id: z.number().optional() })
+        ),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const columnsToUpdate = input.columns.filter((column) => column.id);
+      const columnsToCreate = input.columns.filter((column) => !column.id);
+      columnsToUpdate.forEach(async (column) => {
+        await ctx.prisma.column.update({
+          where: { id: column.id },
+          data: { name: column.name },
+        });
+      });
+      const colIDStoNotDelete = columnsToUpdate.map(
+        (col) => col.id
+      ) as number[];
+      await ctx.prisma.column.deleteMany({
+        where: { id: { notIn: colIDStoNotDelete }, boardId: input.boardID },
+      });
+      const board = await ctx.prisma.board.update({
+        where: { id: input.boardID },
+        data: {
+          name: input.name,
+          Column: { createMany: { data: columnsToCreate } },
+        },
+        select: {
+          id: true,
+          name: true,
+          Column: {
+            orderBy: { createdAt: "asc" },
+            select: {
+              name: true,
+              id: true,
+              Task: {
+                orderBy: { createdAt: "asc" },
+                select: {
+                  title: true,
+                  description: true,
+                  status: { select: { id: true } },
+                  id: true,
+                  SubTask: {
+                    select: { id: true, title: true, isCompleted: true },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+      if (board) {
+        const tasks = flatten(board.Column.map((column) => column.Task));
+        return {
+          id: board.id,
+          name: board.name,
+          tasks,
+          columnsList: board.Column.map((column) => {
+            return { name: column.name, id: column.id };
+          }),
+        };
+      }
+
+      return board;
+    }),
   editTask: protectedProcedure
     .input(
       z.object({
@@ -126,13 +195,20 @@ export const authRouter = router({
         ),
       })
     )
-    .mutation(({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       const subtasksToUpdate = input.subtasks.filter((subtask) => subtask.id);
       subtasksToUpdate.forEach(async (subtask) => {
         await ctx.prisma.subTask.update({
           where: { id: subtask.id },
           data: { title: subtask.title },
         });
+      });
+      // deleting deleted subtasks
+      const updatedIds = subtasksToUpdate.map(
+        (subtask) => subtask.id
+      ) as number[];
+      await ctx.prisma.subTask.deleteMany({
+        where: { id: { notIn: updatedIds }, taskId: input.taskID },
       });
       const subtasksToCreate = input.subtasks.filter((subtask) => !subtask.id);
       return ctx.prisma.task.update({

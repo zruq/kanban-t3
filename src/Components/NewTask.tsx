@@ -8,7 +8,9 @@ import { trpc } from "../utils/trpc";
 type NewTaskProps = {
   cols: { name: string; id: number }[];
   dispatch: Dispatch<Action>;
-  setShowModal: Dispatch<SetStateAction<boolean | number>>;
+  setShowModal:
+    | Dispatch<SetStateAction<boolean | number>>
+    | Dispatch<SetStateAction<boolean>>;
   boardID: number;
   task?: {
     SubTask: {
@@ -20,7 +22,7 @@ type NewTaskProps = {
       id: number;
     };
     title: string;
-    description: string | null;
+    description: string | undefined;
   };
 };
 const NewTask = ({
@@ -34,7 +36,7 @@ const NewTask = ({
     task
       ? {
           title: task?.title as string,
-          description: task?.description as string | undefined,
+          description: task?.description || "",
           subtasks: task?.SubTask,
           status: cols.filter((col) => col.id === task?.status.id)[0]
             ?.name as string,

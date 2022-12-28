@@ -55,6 +55,9 @@ export default function reducer(state: QBoard, action: Action): QBoard {
       tasks: state.tasks.filter((task) => task.id !== action.payload.id),
     };
   }
+  if (action.type === "EDIT_BOARD") {
+    return { ...action.payload };
+  }
   return state;
   // if (action.type === "TOGGLE_SUBTASK") {
   //   const { index, columnindex, taskindex } = action.payload;

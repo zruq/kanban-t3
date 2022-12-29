@@ -37,12 +37,12 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
         type: "SILENT_EDIT_BOARD",
         payload: { newBoard: data, id: board?.id as number },
       });
-      setShowModal(false);
     },
   });
   const newBoardMutation = trpc.auth.createBoard.useMutation({
     onSuccess: (data) => {
       dispatch({ type: "ADD_BOARD", payload: data });
+      setShowModal(false);
     },
   });
   return (

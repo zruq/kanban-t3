@@ -16,6 +16,7 @@ type NewTaskProps = {
     SubTask: {
       id?: number;
       title: string;
+      frontendID?: boolean;
     }[];
     id: number;
     status: {
@@ -57,19 +58,15 @@ const NewTask = ({
       dispatch({ type: "ADD_TASK", payload: { task: data, boardID } });
     },
   });
-  const editTaskMutation = trpc.auth.editTask
-    .useMutation
-    //   {
-    //   onSuccess: (data) => {
-    //     // if (task)
-    //     //   dispatch({
-    //     //     type: "EDIT_TASK",
-    //     //     payload: { task: data, taskID: task.id },
-    //     //   });
-    //   },
-    // }
-    ();
-
+  const editTaskMutation = trpc.auth.editTask.useMutation({
+    onSuccess: (data) => {
+      // update task silently mostly subtasks ids
+      dispatch({
+        type: "SILENT_EDIT_TASK",
+        payload: { task: data, boardID },
+      });
+    },
+  });
   return (
     <Card
       onClick={(e) => {
@@ -228,14 +225,6 @@ recharge the batteries a little."
                 description: newTaskState.description,
               });
             else {
-              editTaskMutation.mutate({
-                taskID: task.id,
-                boardID: boardID,
-                status: newTaskState.status,
-                title: newTaskState.title,
-                subtasks: newTaskState.subtasks,
-                description: newTaskState.description,
-              });
               dispatch({
                 type: "EDIT_TASK",
                 payload: {
@@ -247,6 +236,14 @@ recharge the batteries a little."
                   subtasks: newTaskState.subtasks,
                   description: newTaskState.description,
                 },
+              });
+              editTaskMutation.mutate({
+                taskID: task.id,
+                boardID: boardID,
+                status: newTaskState.status,
+                title: newTaskState.title,
+                subtasks: newTaskState.subtasks,
+                description: newTaskState.description,
               });
             }
             setShowModal(false);

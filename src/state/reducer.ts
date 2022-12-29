@@ -77,7 +77,7 @@ export function reducer(state: StateType, action: Action): StateType {
                         return {
                           title: subtask.title,
                           isCompleted: false,
-                          id: Math.floor(Math.random() * 100000),
+                          id: Math.floor(Math.random() * 100000000000000000),
                         };
                       }),
                     ],
@@ -90,7 +90,24 @@ export function reducer(state: StateType, action: Action): StateType {
           return board;
         }),
       };
-
+    case "SILENT_EDIT_TASK":
+      return {
+        activeBoardId: state.activeBoardId,
+        boards: state.boards.map((board) => {
+          if (board.id === action.payload.boardID) {
+            return {
+              ...board,
+              tasks: board.tasks.map((task) => {
+                if (task.id === action.payload.task.id) {
+                  return action.payload.task;
+                }
+                return task;
+              }),
+            };
+          }
+          return board;
+        }),
+      };
     case "MOVE_TASK":
       const { newColumnID, taskID } = action.payload;
       return {
@@ -155,11 +172,34 @@ export function reducer(state: StateType, action: Action): StateType {
       };
     case "POPULATE":
       return action.payload;
-    case "EDIT_BOARD":
+    case "SILENT_EDIT_BOARD":
       return {
         activeBoardId: action.payload.id,
         boards: state.boards.map((board) => {
           if (board.id === action.payload.id) return action.payload.newBoard;
+          return board;
+        }),
+      };
+    case "EDIT_BOARD":
+      return {
+        activeBoardId: state.activeBoardId,
+        boards: state.boards.map((board) => {
+          if (board.id === action.payload.boardID) {
+            return {
+              name: action.payload.name,
+              columnsList: action.payload.columns.map((column) => {
+                if (column.id) {
+                  return { name: column.name, id: column.id };
+                }
+                return {
+                  name: column.name,
+                  id: Math.floor(Math.random() * 100000),
+                };
+              }),
+              id: action.payload.boardID,
+              tasks: board.tasks,
+            };
+          }
           return board;
         }),
       };
@@ -183,6 +223,7 @@ export function reducer(state: StateType, action: Action): StateType {
 
 export type Action =
   | EditBoard
+  | SilentEditBoard
   | Populate
   | AddBoard
   | ChangeBoard
@@ -191,7 +232,8 @@ export type Action =
   | EditTask
   | DeleteTask
   | ToggleSubtask
-  | MoveTask;
+  | MoveTask
+  | SilentEditTask;
 
 type AddTask = {
   type: "ADD_TASK";
@@ -225,6 +267,38 @@ type EditTask = {
   };
 };
 
+type SilentEditTask = {
+  type: "SILENT_EDIT_TASK";
+  payload: {
+    task: {
+      SubTask: {
+        id: number;
+        title: string;
+        isCompleted: boolean;
+      }[];
+      id: number;
+      status: {
+        id: number;
+      };
+      title: string;
+      description: string | null;
+    };
+    boardID: number;
+  };
+};
+
+type EditBoard = {
+  type: "EDIT_BOARD";
+  payload: {
+    boardID: number;
+    name: string;
+    columns: {
+      name: string;
+      id?: number | undefined;
+    }[];
+  };
+};
+
 type MoveTask = {
   type: "MOVE_TASK";
   payload: { taskID: number; newColumnID: number; boardID: number };
@@ -248,8 +322,8 @@ type Populate = {
   payload: StateType;
 };
 
-type EditBoard = {
-  type: "EDIT_BOARD";
+type SilentEditBoard = {
+  type: "SILENT_EDIT_BOARD";
   payload: { newBoard: BoardType; id: number };
 };
 

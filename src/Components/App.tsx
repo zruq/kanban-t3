@@ -47,7 +47,7 @@ const App = ({ setShowSidebar, showSideBar }: AppProps) => {
             ))}
             <button
               onClick={() => setShowModal(-1)}
-              className="mt-10 flex h-[calc(100vh-12.5rem)] w-[17.5rem] min-w-[17.5rem] max-w-[17.5rem] cursor-pointer items-center justify-center rounded-md bg-opacity-25 bg-gradient-to-br from-[#E9EFFA] to-[#e9effa80] text-hxl text-mediumGrey hover:text-purple dark:bg-opacity-25 dark:from-[#2b2c3740] dark:to-[#2b2c3720]"
+              className="mt-10 flex min-h-[90%] w-[17.5rem] min-w-[17.5rem] max-w-[17.5rem] cursor-pointer items-center justify-center rounded-md bg-opacity-25 bg-gradient-to-br from-[#E9EFFA] to-[#e9effa80] text-hxl text-mediumGrey hover:text-purple dark:bg-opacity-25 dark:from-[#2b2c3740] dark:to-[#2b2c3720]"
             >
               + New Column
             </button>

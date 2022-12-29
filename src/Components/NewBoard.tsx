@@ -34,7 +34,7 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
   const mutation = trpc.auth.editBoard.useMutation({
     onSuccess: (data) => {
       dispatch({
-        type: "EDIT_BOARD",
+        type: "SILENT_EDIT_BOARD",
         payload: { newBoard: data, id: board?.id as number },
       });
       setShowModal(false);
@@ -43,7 +43,6 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
   const newBoardMutation = trpc.auth.createBoard.useMutation({
     onSuccess: (data) => {
       dispatch({ type: "ADD_BOARD", payload: data });
-      setShowModal(false);
     },
   });
   return (
@@ -134,6 +133,15 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
                 columns: boardState.columns,
                 name: boardState.name,
               });
+              dispatch({
+                type: "EDIT_BOARD",
+                payload: {
+                  boardID: boardState.id as number,
+                  columns: boardState.columns,
+                  name: boardState.name,
+                },
+              });
+              setShowModal(false);
             } else {
               newBoardMutation.mutate({
                 name: boardState.name,

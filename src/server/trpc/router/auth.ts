@@ -20,7 +20,7 @@ export const authRouter = router({
         id: true,
         name: true,
         Column: {
-          orderBy: { createdAt: "asc" },
+          orderBy: { id: "asc" },
           select: {
             id: true,
             name: true,
@@ -200,12 +200,12 @@ export const authRouter = router({
           id: true,
           name: true,
           Column: {
-            orderBy: { createdAt: "asc" },
+            orderBy: { id: "asc" },
             select: {
               name: true,
               id: true,
               Task: {
-                orderBy: { createdAt: "asc" },
+                orderBy: { id: "asc" },
                 select: {
                   title: true,
                   description: true,
@@ -306,10 +306,17 @@ export const authRouter = router({
         where: { id: input.taskID },
         select: {
           id: true,
+          title: true,
           status: { select: { id: true } },
           description: true,
-          SubTask: true,
-          title: true,
+          SubTask: {
+            orderBy: { id: "asc" },
+            select: {
+              title: true,
+              isCompleted: true,
+              id: true,
+            },
+          },
         },
         data: {
           title: input.title,

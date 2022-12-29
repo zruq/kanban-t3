@@ -14,6 +14,7 @@ export type BoardType = {
       id: number;
       title: string;
       isCompleted: boolean;
+      frontendId?: boolean;
     }[];
     id: number;
     status: {

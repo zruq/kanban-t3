@@ -121,7 +121,7 @@ const Navbar = ({
           {showSettings && (
             <ul className="absolute right-[1.5%] top-[130%] min-w-[12rem] cursor-pointer rounded-lg bg-white p-4 text-bodyl  text-mediumGrey dark:bg-veryDarkGrey">
               <li
-                className="hover:text-black"
+                className="hover:text-black dark:hover:text-lightGrey"
                 onClick={() => {
                   setShowModal(2);
                 }}
@@ -132,7 +132,7 @@ const Navbar = ({
                 onClick={() => {
                   setShowModal(3);
                 }}
-                className="pt-4 text-red hover:text-redHover"
+                className="pt-4 text-red hover:text-[#BC2727] dark:hover:text-redHover"
               >
                 Delete Board
               </li>

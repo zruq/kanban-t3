@@ -82,7 +82,7 @@ const NewTask = ({
           Title
           <input
             placeholder="e.g. Take coffee break"
-            className={`textInput`}
+            className={`textInput `}
             value={newTaskState.title}
             onChange={(e) =>
               setNewTaskState({ ...newTaskState, title: e.target.value })

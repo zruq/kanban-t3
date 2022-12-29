@@ -60,7 +60,7 @@ const ViewTask = ({
             width="6"
             height="20"
             xmlns="http://www.w3.org/2000/svg"
-            className="cursor-pointer fill-mediumGrey hover:fill-purple dark:hover:fill-purpleHover"
+            className="h-5 w-2 cursor-pointer fill-mediumGrey hover:fill-purple dark:hover:fill-purpleHover"
           >
             <g fillRule="evenodd">
               <circle cx="2.308" cy="2.308" r="2.308" />
@@ -80,7 +80,7 @@ const ViewTask = ({
               </li>
               <li
                 onClick={() => setShowModal(-2)}
-                className="pt-4 text-red hover:text-redHover"
+                className="pt-4 text-red hover:text-[#BC2727] dark:hover:text-redHover"
               >
                 Delete Task
               </li>

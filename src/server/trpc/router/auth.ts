@@ -44,6 +44,7 @@ export const authRouter = router({
           },
         },
       },
+      orderBy: { updatedAt: "desc" },
     });
     return boards.map((board) => {
       const tasks = flatten(board.Column.map((column) => column.Task));

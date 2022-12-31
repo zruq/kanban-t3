@@ -13,6 +13,7 @@ import {
   DragOverlay,
   KeyboardSensor,
   MouseSensor,
+  PointerSensor,
   TouchSensor,
   useSensor,
   useSensors,
@@ -51,7 +52,12 @@ const App = ({ setShowSidebar, showSideBar }: AppProps) => {
     ? activeBoard.tasks.find((task) => task.id === activeId)
     : null;
   const sensors = useSensors(
-    useSensor(MouseSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 10 } }),
     useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,

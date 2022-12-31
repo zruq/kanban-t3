@@ -294,7 +294,7 @@ export const authRouter = router({
     )
     .mutation(({ input, ctx }) => {
       input.forEach(async (taskInput) => {
-        const task = await ctx.prisma.task.update({
+        await ctx.prisma.task.update({
           where: { id: taskInput.taskid },
           data: {
             order: taskInput.order,

@@ -4,9 +4,13 @@ import type {
   HTMLAttributes,
   SetStateAction,
 } from "react";
+import { useDroppable } from "@dnd-kit/core";
+import { rectSortingStrategy, SortableContext } from "@dnd-kit/sortable";
+
 import TaskCard from "./TaskCard";
 
 type ColumnCardProps = {
+  colid: number;
   setShowModal: Dispatch<SetStateAction<boolean | number>>;
   tasks: {
     SubTask: {
@@ -25,15 +29,23 @@ type ColumnCardProps = {
 } & DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
 const ColumnCard = ({
+  colid,
   setShowModal,
   tasks,
   name,
   ...props
 }: ColumnCardProps) => {
-  // const [showModal, setShowModal] = useState<boolean | number>(false);
+  const { setNodeRef } = useDroppable({
+    id: colid,
+    data: { colid },
+  });
   return (
-    <>
-      <div {...props}>
+    <SortableContext
+      id={`col${colid}`}
+      items={tasks.map((task) => task.id)}
+      strategy={rectSortingStrategy}
+    >
+      <div {...props} ref={setNodeRef}>
         <div className="flex items-center justify-start pb-6">
           <div className=" mr-3 h-[15px] w-[15px] rounded-full bg-[#49C4E5]"></div>
           <h2 className=" text-hs uppercase text-mediumGrey">
@@ -42,6 +54,7 @@ const ColumnCard = ({
         </div>
         {tasks.map((task) => (
           <TaskCard
+            taskid={task.id}
             onClick={() => setShowModal(task.id)}
             key={task.id}
             numberOfCompletedSubtasks={
@@ -53,7 +66,7 @@ const ColumnCard = ({
           />
         ))}
       </div>
-    </>
+    </SortableContext>
   );
 };
 

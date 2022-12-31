@@ -10,6 +10,7 @@ export type BoardType = {
   id: number;
   name: string;
   tasks: {
+    order: number;
     SubTask: {
       id: number;
       title: string;

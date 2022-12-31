@@ -6,13 +6,7 @@ export const authRouter = router({
   getSession: publicProcedure.query(({ ctx }) => {
     return ctx.session;
   }),
-  getBoardsList: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.board.findMany({
-      where: { userId: ctx.session.user.id },
-      select: { id: true, name: true },
-      orderBy: { updatedAt: "desc" },
-    });
-  }),
+
   getBoards: protectedProcedure.query(async ({ ctx }) => {
     const boards = await ctx.prisma.board.findMany({
       where: { userId: ctx.session.user.id },
@@ -28,6 +22,7 @@ export const authRouter = router({
               orderBy: { updatedAt: "desc" },
               select: {
                 id: true,
+                order: true,
                 title: true,
                 status: { select: { id: true } },
                 description: true,
@@ -58,50 +53,7 @@ export const authRouter = router({
       };
     });
   }),
-  getBoardById: protectedProcedure
-    .input(z.object({ id: z.number().optional() }))
-    .query(async ({ input, ctx }) => {
-      const board = await ctx.prisma.board.findFirst({
-        where: { id: input.id, userId: ctx.session.user.id },
-        select: {
-          id: true,
-          name: true,
-          Column: {
-            orderBy: { createdAt: "asc" },
-            select: {
-              name: true,
-              id: true,
-              Task: {
-                orderBy: { updatedAt: "desc" },
-                select: {
-                  title: true,
-                  description: true,
-                  status: { select: { id: true } },
-                  id: true,
-                  SubTask: {
-                    select: { id: true, title: true, isCompleted: true },
-                  },
-                },
-              },
-            },
-          },
-        },
-        orderBy: { updatedAt: "desc" },
-      });
-      if (board) {
-        const tasks = flatten(board.Column.map((column) => column.Task));
-        return {
-          id: board.id,
-          name: board.name,
-          tasks,
-          columnsList: board.Column.map((column) => {
-            return { name: column.name, id: column.id };
-          }),
-        };
-      }
 
-      return board;
-    }),
   postNewTask: protectedProcedure
     .input(
       z.object({
@@ -130,6 +82,7 @@ export const authRouter = router({
         select: {
           id: true,
           title: true,
+          order: true,
           status: { select: { id: true } },
           description: true,
           SubTask: {
@@ -210,6 +163,7 @@ export const authRouter = router({
                 select: {
                   title: true,
                   description: true,
+                  order: true,
                   status: { select: { id: true } },
                   id: true,
                   SubTask: {
@@ -310,6 +264,7 @@ export const authRouter = router({
           title: true,
           status: { select: { id: true } },
           description: true,
+          order: true,
           SubTask: {
             orderBy: { id: "asc" },
             select: {
@@ -329,6 +284,23 @@ export const authRouter = router({
           },
           SubTask: { createMany: { data: subtasksToCreate } },
         },
+      });
+    }),
+  updateOrders: protectedProcedure
+    .input(
+      z.array(
+        z.object({ taskid: z.number(), colid: z.number(), order: z.number() })
+      )
+    )
+    .mutation(({ input, ctx }) => {
+      input.forEach(async (taskInput) => {
+        const task = await ctx.prisma.task.update({
+          where: { id: taskInput.taskid },
+          data: {
+            order: taskInput.order,
+            status: { connect: { id: taskInput.colid } },
+          },
+        });
       });
     }),
 });

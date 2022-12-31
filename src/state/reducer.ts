@@ -56,6 +56,7 @@ export function reducer(state: StateType, action: Action): StateType {
                     id: task.id,
                     title: action.payload.title,
                     status: { id: action.payload.status },
+                    order: task.order,
                     description: action.payload.description || null,
                     SubTask: [
                       ...task.SubTask.map((subtask) => {
@@ -113,13 +114,25 @@ export function reducer(state: StateType, action: Action): StateType {
       return {
         activeBoardId: state.activeBoardId,
         boards: state.boards.map((board) => {
+          let newOrder: number | undefined = undefined;
+          if (action.payload.overId) {
+            newOrder = board.tasks.find(
+              (task) => task.id === action.payload.overId
+            )?.order;
+          }
           if (board.id === action.payload.boardID) {
             return {
               ...board,
               tasks: board.tasks.map((task) => {
                 if (task.id === taskID) {
-                  return { ...task, status: { id: newColumnID } };
+                  return {
+                    ...task,
+                    status: { id: newColumnID },
+                    order: newOrder || task.order,
+                  };
                 }
+                if (newOrder && task.order >= newOrder)
+                  return { ...task, order: task.order + 1 };
                 return task;
               }),
             };
@@ -203,6 +216,45 @@ export function reducer(state: StateType, action: Action): StateType {
           return board;
         }),
       };
+    case "CHANGE_TASK_ORDER":
+      return {
+        activeBoardId: state.activeBoardId,
+        boards: state.boards.map((board) => {
+          if (board.id === state.activeBoardId) {
+            const overOrder = board.tasks.find(
+              (task) => task.id === action.payload.overTaskId
+            )?.order as number;
+            if (!overOrder) return board;
+            const activeTask = board.tasks.find(
+              (task) => task.id === action.payload.activeTaskId
+            );
+            if (!activeTask) return board;
+            const bigger = activeTask.order >= overOrder;
+            return {
+              ...board,
+              tasks: board.tasks.map((task) => {
+                if (task.id === action.payload.activeTaskId) {
+                  return {
+                    ...task,
+                    order: !bigger ? overOrder + 1 : overOrder,
+                  };
+                }
+                if (
+                  task.status.id === action.payload.colId &&
+                  (bigger ? task.order >= overOrder : task.order > overOrder) &&
+                  task.id !== action.payload.activeTaskId
+                )
+                  return {
+                    ...task,
+                    order: task.order + 1,
+                  };
+                return task;
+              }),
+            };
+          }
+          return board;
+        }),
+      };
     default:
       return state;
   }
@@ -233,8 +285,13 @@ export type Action =
   | DeleteTask
   | ToggleSubtask
   | MoveTask
-  | SilentEditTask;
+  | SilentEditTask
+  | ChangeTaskOrder;
 
+type ChangeTaskOrder = {
+  type: "CHANGE_TASK_ORDER";
+  payload: { activeTaskId: number; overTaskId: number; colId: number };
+};
 type AddTask = {
   type: "ADD_TASK";
   payload: {
@@ -244,6 +301,7 @@ type AddTask = {
         title: string;
         isCompleted: boolean;
       }[];
+      order: number;
       id: number;
       status: {
         id: number;
@@ -277,6 +335,7 @@ type SilentEditTask = {
         isCompleted: boolean;
       }[];
       id: number;
+      order: number;
       status: {
         id: number;
       };
@@ -301,7 +360,12 @@ type EditBoard = {
 
 type MoveTask = {
   type: "MOVE_TASK";
-  payload: { taskID: number; newColumnID: number; boardID: number };
+  payload: {
+    taskID: number;
+    newColumnID: number;
+    boardID: number;
+    overId?: number;
+  };
 };
 type ToggleSubtask = {
   type: "TOGGLE_SUBTASK";

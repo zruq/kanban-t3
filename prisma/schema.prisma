@@ -1,80 +1,73 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-  // Further reading:
-  // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-  // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
   url      = env("DATABASE_URL")
 }
 
 model Board {
-  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  name      String   @db.VarChar(255)
+  id        Int      @id @default(autoincrement())
   User      User     @relation(fields: [userId], references: [id])
-  userId    String
   Column    Column[]
 }
 
 model Column {
-  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  name      String   @db.VarChar(255)
-  board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  id        Int      @id @default(autoincrement())
   boardId   Int
+  board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
   Task      Task[]
 
   @@unique([name, boardId])
 }
 
 model Task {
-  id          Int       @id @default(autoincrement())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
   title       String    @db.VarChar(255)
   description String?
-  status      Column    @relation(fields: [statusName, boardId], references: [name, boardId], onDelete: Cascade)
-  boardId     Int
   statusName  String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  id          Int       @id @default(autoincrement())
+  boardId     Int
+  order       Int       @default(0)
   SubTask     SubTask[]
+  status      Column    @relation(fields: [statusName, boardId], references: [name, boardId], onDelete: Cascade)
 
   @@unique([title, boardId])
 }
 
 model SubTask {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
   title       String
   isCompleted Boolean  @default(false)
-  mainTask    Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
   taskId      Int
+  mainTask    Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   @@unique([title, taskId])
 }
 
-// Necessary for Next auth
 model Account {
   id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
   user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -96,8 +89,8 @@ model User {
   emailVerified DateTime?
   image         String?
   accounts      Account[]
-  sessions      Session[]
   boards        Board[]
+  sessions      Session[]
 }
 
 model VerificationToken {

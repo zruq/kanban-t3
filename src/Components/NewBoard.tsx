@@ -106,7 +106,7 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
 
         <label className="text-hs tracking-normal text-mediumGrey dark:text-white">
           <div className="pb-2 pt-4"> Board Columns</div>
-          {boardState.columns.map((column, index) => (
+          {boardState.columns.map((column) => (
             <div
               className="flex items-center justify-start pb-3"
               key={column.id || column.fakeid}
@@ -164,8 +164,10 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
                 onClick={() =>
                   setBoardState({
                     ...boardState,
-                    columns: boardState.columns.filter(
-                      (colmny, indexie) => indexie !== index
+                    columns: boardState.columns.filter((colmny) =>
+                      column.id
+                        ? colmny.id !== column.id
+                        : colmny.fakeid !== column.fakeid
                     ),
                   })
                 }

@@ -14,9 +14,8 @@ type NewTaskProps = {
   boardID: number;
   task?: {
     SubTask: {
-      id?: number;
+      id: number;
       title: string;
-      frontendID?: boolean;
     }[];
     id: number;
     status: {
@@ -36,19 +35,26 @@ const NewTask = ({
   const [newTaskState, setNewTaskState] = useState(
     task
       ? {
-          title: task?.title as string,
+          title: { content: task?.title as string, error: "" },
           description: task?.description || "",
-          subtasks: task?.SubTask,
+          subtasks: task?.SubTask.map((subtask) => {
+            return { ...subtask, error: "", fakeid: undefined };
+          }) as {
+            title: string;
+            id?: number;
+            fakeid?: number;
+            error: string;
+          }[],
           status: cols.filter((col) => col.id === task?.status.id)[0]
             ?.name as string,
         }
       : {
-          title: "",
+          title: { content: "", error: "" },
           description: "",
           status: cols[0]?.name as string,
           subtasks: [
-            { title: "", id: undefined },
-            { title: "", id: undefined },
+            { title: "", id: undefined, fakeid: -1, error: "" },
+            { title: "", id: undefined, fakeid: -2, error: "" },
           ],
         }
   );
@@ -56,6 +62,7 @@ const NewTask = ({
   const mutation = trpc.auth.postNewTask.useMutation({
     onSuccess: (data) => {
       dispatch({ type: "ADD_TASK", payload: { task: data, boardID } });
+      setShowModal(false);
     },
   });
   const editTaskMutation = trpc.auth.editTask.useMutation({
@@ -80,14 +87,40 @@ const NewTask = ({
         </h2>
         <label className="text-hs tracking-normal text-mediumGrey dark:text-white">
           Title
-          <input
-            placeholder="e.g. Take coffee break"
-            className={`textInput `}
-            value={newTaskState.title}
-            onChange={(e) =>
-              setNewTaskState({ ...newTaskState, title: e.target.value })
-            }
-          />
+          <div className="relative">
+            <input
+              onBlur={(e) => {
+                if (!e.target.value) {
+                  setNewTaskState({
+                    ...newTaskState,
+                    title: {
+                      content: newTaskState.title.content,
+                      error: "Can’t be empty",
+                    },
+                  });
+                }
+              }}
+              placeholder="e.g. Take coffee break"
+              className={`textInput ${
+                newTaskState.title.error ? "border-red" : ""
+              } `}
+              value={newTaskState.title.content}
+              onChange={(e) =>
+                setNewTaskState({
+                  ...newTaskState,
+                  title: {
+                    content: e.target.value,
+                    error: e.target.value ? "" : "Can’t be empty",
+                  },
+                })
+              }
+            />
+            {newTaskState.title.error && (
+              <div className="absolute right-0 top-0 bottom-0 my-auto mr-4 h-fit text-bodyl text-red">
+                {newTaskState.title.error}
+              </div>
+            )}
+          </div>
         </label>
         <label className="text-hs tracking-normal text-mediumGrey dark:text-white">
           Description
@@ -104,34 +137,73 @@ recharge the batteries a little."
         <label className="text-hs tracking-normal text-mediumGrey dark:text-white">
           <div className="mt-6 pb-2"> Subtasks </div>
           {newTaskState.subtasks.map((subtask, index) => (
-            <div className="flex items-center justify-start pb-3" key={index}>
-              <input
-                placeholder={
-                  index % 2 === 0
-                    ? "e.g. Make coffee"
-                    : "e.g. Drink coffee & smile"
-                }
-                className={`textInput my-0 mr-4 `}
-                value={subtask.title}
-                onChange={(e) =>
-                  setNewTaskState({
-                    ...newTaskState,
-                    subtasks: newTaskState.subtasks.map(
-                      (subtaskie, indexie) => {
-                        if (indexie === index)
-                          return { ...subtaskie, title: e.target.value };
+            <div
+              className="flex items-center justify-start pb-3"
+              key={subtask.id || subtask.fakeid}
+            >
+              <div className="relative mr-4 w-full">
+                <input
+                  placeholder={
+                    index % 2 === 0
+                      ? "e.g. Make coffee"
+                      : "e.g. Drink coffee & smile"
+                  }
+                  className={`textInput my-0  ${
+                    subtask.error ? "border-red" : ""
+                  } `}
+                  value={subtask.title}
+                  onBlur={(e) => {
+                    if (!e.target.value) {
+                      setNewTaskState((newTaskState) => {
+                        return {
+                          ...newTaskState,
+                          subtasks: newTaskState.subtasks.map((subtaskie) => {
+                            if (
+                              subtask.id
+                                ? subtaskie.id === subtask.id
+                                : subtaskie.fakeid === subtask.fakeid
+                            )
+                              return { ...subtaskie, error: "Can’t be empty" };
+                            return subtaskie;
+                          }),
+                        };
+                      });
+                    }
+                  }}
+                  onChange={(e) =>
+                    setNewTaskState({
+                      ...newTaskState,
+                      subtasks: newTaskState.subtasks.map((subtaskie) => {
+                        if (
+                          subtask.id
+                            ? subtaskie.id === subtask.id
+                            : subtaskie.fakeid === subtask.fakeid
+                        )
+                          return {
+                            ...subtaskie,
+                            title: e.target.value,
+                            error: e.target.value ? "" : "Can’t be empty",
+                            fakeid: subtaskie.fakeid,
+                          };
                         return subtaskie;
-                      }
-                    ),
-                  })
-                }
-              />
+                      }),
+                    })
+                  }
+                />
+                {subtask.error && (
+                  <div className="absolute right-0 top-0 bottom-0 my-auto mr-4 h-fit text-bodyl text-red">
+                    {subtask.error}
+                  </div>
+                )}
+              </div>
               <svg
                 onClick={() =>
                   setNewTaskState({
                     ...newTaskState,
-                    subtasks: newTaskState.subtasks.filter(
-                      (subtaskie, indexie) => indexie !== index
+                    subtasks: newTaskState.subtasks.filter((subtaskie) =>
+                      subtask.id
+                        ? subtaskie.id !== subtask.id
+                        : subtaskie.fakeid !== subtask.fakeid
                     ),
                   })
                 }
@@ -156,7 +228,10 @@ recharge the batteries a little."
 
             setNewTaskState({
               ...newTaskState,
-              subtasks: [...newTaskState.subtasks, { title: "" }],
+              subtasks: [
+                ...newTaskState.subtasks,
+                { title: "", error: "", fakeid: new Date().getTime() },
+              ],
             });
           }}
         >
@@ -214,13 +289,53 @@ recharge the batteries a little."
         </label>
         {/* dropdown */}
         <Button
+          disabled={
+            !!newTaskState.title.error ||
+            !!newTaskState.subtasks.find((subtask) => subtask.error)?.error ||
+            mutation.isLoading
+          }
           onClick={(e) => {
             e.preventDefault();
+            //check for errors
+            let theresAnError = false;
+            if (!newTaskState.title.content) {
+              setNewTaskState((newTaskState) => {
+                return {
+                  ...newTaskState,
+                  title: { content: "", error: "Can’t be empty" },
+                };
+              });
+              theresAnError = true;
+            }
+            const uniqueSubtasksNames: string[] = [];
+            const subtasks = newTaskState.subtasks.map((subtask) => {
+              if (!subtask.title) {
+                theresAnError = true;
+                return { ...subtask, error: "Can’t be empty" };
+              }
+              if (
+                uniqueSubtasksNames.find(
+                  (subtaskname) =>
+                    subtaskname === subtask.title.trim().toLowerCase()
+                )
+              ) {
+                theresAnError = true;
+                return { ...subtask, error: "Must be unique" };
+              } else {
+                uniqueSubtasksNames.push(subtask.title.trim().toLowerCase());
+              }
+              return subtask;
+            });
+            setNewTaskState((newTaskState) => {
+              return { ...newTaskState, subtasks: subtasks };
+            });
+            if (theresAnError) return;
+            //if no error mutate
             if (!task)
               mutation.mutate({
                 boardID: boardID,
                 status: newTaskState.status,
-                title: newTaskState.title,
+                title: newTaskState.title.content,
                 subtasks: newTaskState.subtasks.map((subtask) => subtask.title),
                 description: newTaskState.description,
               });
@@ -232,7 +347,7 @@ recharge the batteries a little."
                   boardID: boardID,
                   status: cols.find((col) => col.name === newTaskState.status)
                     ?.id as number,
-                  title: newTaskState.title,
+                  title: newTaskState.title.content,
                   subtasks: newTaskState.subtasks,
                   description: newTaskState.description,
                 },
@@ -241,18 +356,27 @@ recharge the batteries a little."
                 taskID: task.id,
                 boardID: boardID,
                 status: newTaskState.status,
-                title: newTaskState.title,
+                title: newTaskState.title.content,
                 subtasks: newTaskState.subtasks,
                 description: newTaskState.description,
               });
+              setShowModal(false);
             }
-            setShowModal(false);
           }}
           cType="primaryS"
-          className="my-0 mt-6 w-full"
+          className="my-0 mt-6 w-full disabled:cursor-not-allowed disabled:bg-veryDarkGrey"
           type="submit"
         >
-          {task ? "Save Changes" : "Create Task"}
+          {task ? (
+            "Save Changes"
+          ) : mutation.isLoading ? (
+            <div className="flex items-center justify-center">
+              <div className="mr-2  inline-block h-4 w-4  animate-spin rounded-full border-l border-linesLight"></div>{" "}
+              <div className="inline-block"> Creating New Task</div>
+            </div>
+          ) : (
+            "Create Task"
+          )}
         </Button>
       </form>
     </Card>

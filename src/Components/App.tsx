@@ -14,7 +14,6 @@ import {
   KeyboardSensor,
   MouseSensor,
   PointerSensor,
-  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";

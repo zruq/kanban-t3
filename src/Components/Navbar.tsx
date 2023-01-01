@@ -155,11 +155,12 @@ const Navbar = ({
             + Add New Task
           </Button>
           <Button
+            disabled={colsList.length === 0}
             onClick={() => {
               setShowModal(1);
             }}
             cType="primaryL"
-            className="mr-4 block py-3 px-4 tablet:hidden"
+            className="mr-4 block py-3 px-4 disabled:cursor-not-allowed disabled:opacity-25 tablet:hidden"
           >
             <svg width="12" height="12" xmlns="http://www.w3.org/2000/svg">
               <path

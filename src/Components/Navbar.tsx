@@ -108,20 +108,37 @@ const Navbar = ({
             } text-hl capitalize text-black dark:text-white tablet:text-[1.25rem] tablet:font-bold tablet:leading-[1.575rem] desktop:text-hxl `}
           >
             {boardName}
-            <svg
-              onClick={() => setShowSidebar(!showSideBar)}
-              className="ml-2 inline-block cursor-pointer tablet:hidden"
-              width="10"
-              height="7"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke="#635FC7"
-                strokeWidth="2"
-                fill="none"
-                d="m1 1 4 4 4-4"
-              />
-            </svg>
+            {showSideBar ? (
+              <svg
+                width="10"
+                height="7"
+                onClick={() => setShowSidebar(!showSideBar)}
+                className="ml-2 inline-block cursor-pointer tablet:hidden"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke="#635FC7"
+                  strokeWidth="2"
+                  fill="none"
+                  d="M9 6 5 2 1 6"
+                />
+              </svg>
+            ) : (
+              <svg
+                onClick={() => setShowSidebar(!showSideBar)}
+                className="ml-2 inline-block cursor-pointer tablet:hidden"
+                width="10"
+                height="7"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke="#635FC7"
+                  strokeWidth="2"
+                  fill="none"
+                  d="m1 1 4 4 4-4"
+                />
+              </svg>
+            )}
           </h1>
         </div>
         <div className="relative flex items-center justify-evenly">

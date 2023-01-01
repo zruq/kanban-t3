@@ -19,8 +19,9 @@ export const authRouter = router({
             id: true,
             name: true,
             Task: {
-              orderBy: { updatedAt: "desc" },
+              orderBy: { order: "asc" },
               select: {
+                updatedAt: true,
                 id: true,
                 order: true,
                 title: true,
@@ -39,19 +40,26 @@ export const authRouter = router({
           },
         },
       },
-      orderBy: { updatedAt: "desc" },
     });
-    return boards.map((board) => {
-      const tasks = flatten(board.Column.map((column) => column.Task));
-      return {
-        id: board.id,
-        name: board.name,
-        tasks,
-        columnsList: board.Column.map((column) => {
-          return { name: column.name, id: column.id };
-        }),
-      };
-    });
+    return boards
+      .map((board) => {
+        const tasks = flatten(board.Column.map((column) => column.Task));
+        return {
+          id: board.id,
+          name: board.name,
+          tasks,
+          columnsList: board.Column.map((column) => {
+            return { name: column.name, id: column.id };
+          }),
+        };
+      })
+      .sort((a, b) => {
+        if (a.tasks[0] && b.tasks[0])
+          return (
+            b.tasks[0].updatedAt.getTime() - a.tasks[0].updatedAt.getTime()
+          );
+        return b.id - a.id;
+      });
   }),
 
   postNewTask: protectedProcedure

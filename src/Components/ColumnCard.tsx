@@ -47,7 +47,15 @@ const ColumnCard = ({
     >
       <div {...props} ref={setNodeRef}>
         <div className="flex items-center justify-start pb-6">
-          <div className=" mr-3 h-[15px] w-[15px] rounded-full bg-[#49C4E5]"></div>
+          <div
+            className={` mr-3 h-[15px] w-[15px] rounded-full ${
+              name.toLowerCase() === "todo"
+                ? "bg-[#49C4E5]"
+                : name.toLowerCase() === "done"
+                ? "bg-[#67E2AE]"
+                : "bg-[#8471F2]"
+            } `}
+          ></div>
           <h2 className=" text-hs uppercase text-mediumGrey">
             {name} ({tasks.length})
           </h2>

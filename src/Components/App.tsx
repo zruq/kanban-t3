@@ -54,11 +54,11 @@ const App = ({ setShowSidebar, showSideBar }: AppProps) => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8,
+        distance: 0,
       },
     }),
     useSensor(TouchSensor, {
-      activationConstraint: { delay: 30, distance: 8 },
+      activationConstraint: { delay: 0, distance: 0 },
     }),
     useSensor(MouseSensor, { activationConstraint: { distance: 10 } }),
     useSensor(KeyboardSensor, {

@@ -191,7 +191,7 @@ recharge the batteries a little."
                   }
                 />
                 {subtask.error && (
-                  <div className="absolute right-0 top-0 bottom-0 my-auto mr-4 h-fit rounded-l-3xl pl-4 text-bodyl text-red dark:bg-darkGrey">
+                  <div className="absolute right-0 top-0 bottom-0 my-auto mr-4 h-fit rounded-l-3xl bg-white pl-4 text-bodyl text-red dark:bg-darkGrey">
                     {subtask.error}
                   </div>
                 )}

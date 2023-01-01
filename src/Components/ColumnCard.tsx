@@ -46,7 +46,7 @@ const ColumnCard = ({
       strategy={rectSortingStrategy}
     >
       <div {...props} ref={setNodeRef}>
-        <div className="flex items-center justify-start pb-6">
+        <div className="flex items-center justify-start overflow-hidden whitespace-nowrap pb-6">
           <div
             className={` mr-3 h-[15px] w-[15px] rounded-full ${
               name.toLowerCase() === "todo"
@@ -56,7 +56,7 @@ const ColumnCard = ({
                 : "bg-[#8471F2]"
             } `}
           ></div>
-          <h2 className=" text-hs uppercase text-mediumGrey">
+          <h2 className=" ... w-[17rem] truncate text-ellipsis text-hs uppercase text-mediumGrey">
             {name} ({tasks.length})
           </h2>
         </div>

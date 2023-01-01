@@ -97,7 +97,7 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
               }}
             />
             {boardState.name.error && (
-              <div className="absolute right-0 top-0 bottom-0 my-auto mr-4 h-fit text-bodyl text-red">
+              <div className="absolute right-0 top-0 bottom-0 my-auto mr-4 h-fit rounded-l-3xl bg-white pl-4 text-bodyl text-red dark:bg-darkGrey">
                 {boardState.name.error}
               </div>
             )}
@@ -155,7 +155,7 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
                   }}
                 />
                 {column.error && (
-                  <div className="absolute right-0 top-0 bottom-0 my-auto mr-4 h-fit text-bodyl text-red">
+                  <div className="absolute right-0 top-0 bottom-0 my-auto mr-4 h-fit rounded-l-3xl bg-white pl-4 text-bodyl text-red dark:bg-darkGrey">
                     {column.error}
                   </div>
                 )}

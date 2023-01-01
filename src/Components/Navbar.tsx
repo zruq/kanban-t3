@@ -107,7 +107,7 @@ const Navbar = ({
               showSideBar ? "ml-4 tablet:ml-0" : "ml-4 tablet:ml-6 desktop:ml-8"
             } overflow-hidden  whitespace-nowrap text-hl capitalize text-black dark:text-white tablet:text-[1.25rem] tablet:font-bold tablet:leading-[1.575rem] desktop:text-hxl `}
           >
-            <span className="... inline-block w-36 truncate text-ellipsis tablet:w-44 desktop:w-96">
+            <span className="... max-w-36 inline-block truncate text-ellipsis tablet:w-44 desktop:w-96">
               {boardName}
             </span>
             {showSideBar ? (
@@ -115,7 +115,7 @@ const Navbar = ({
                 width="10"
                 height="7"
                 onClick={() => setShowSidebar(!showSideBar)}
-                className="ml-2 inline-block cursor-pointer tablet:hidden"
+                className="ml-2 -mt-3 inline-block cursor-pointer tablet:hidden"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
@@ -128,7 +128,7 @@ const Navbar = ({
             ) : (
               <svg
                 onClick={() => setShowSidebar(!showSideBar)}
-                className="ml-2 inline-block cursor-pointer tablet:hidden"
+                className="ml-2 -mt-3  inline-block cursor-pointer tablet:hidden"
                 width="10"
                 height="7"
                 xmlns="http://www.w3.org/2000/svg"

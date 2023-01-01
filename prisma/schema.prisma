@@ -37,7 +37,7 @@ model Task {
   updatedAt   DateTime  @updatedAt
   id          Int       @id @default(autoincrement())
   boardId     Int
-  order       Int       @default(0)
+  order       Int       @default(autoincrement())
   SubTask     SubTask[]
   status      Column    @relation(fields: [statusName, boardId], references: [name, boardId], onDelete: Cascade)
 

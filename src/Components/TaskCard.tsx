@@ -37,7 +37,7 @@ const TaskCard = ({
       {...listeners}
       {...props}
       className={
-        "w-[17.5rem] touch-pan-x touch-pan-y rounded-lg bg-white px-4 py-6 shadow-[0px_4px_6px_rgba(54,_78,_126,_0.101545)] dark:bg-darkGrey " +
+        "w-[17.5rem] touch-none touch-pinch-zoom  rounded-lg bg-white px-4 py-6 shadow-[0px_4px_6px_rgba(54,_78,_126,_0.101545)] dark:bg-darkGrey " +
         className
       }
     >

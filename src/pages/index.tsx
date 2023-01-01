@@ -7,11 +7,13 @@ import { useEffect, useState } from "react";
 import Sidebar from "../Components/Sidebar";
 import App from "../Components/App";
 import AppStateProvider from "../state/appStateContext";
+import Modal from "../Components/shared/Modal";
 
 const Home: NextPage = () => {
   const [isLight, setIsLight] = useState<boolean>(true);
   const session = useSession();
   const [showSideBar, setShowSidebar] = useState(false);
+
   useEffect(() => {
     setIsLight(() => {
       const isLight = localStorage.getItem("theme");
@@ -37,11 +39,25 @@ const Home: NextPage = () => {
         <AppStateProvider>
           <div className={`flex  h-screen w-screen overflow-hidden`}>
             {showSideBar && (
-              <Sidebar
-                setShowSidebar={setShowSidebar}
-                isLight={isLight}
-                setIsLight={setIsLight}
-              />
+              <div className="hidden tablet:block">
+                <Sidebar
+                  setShowSidebar={setShowSidebar}
+                  isLight={isLight}
+                  setIsLight={setIsLight}
+                />
+              </div>
+            )}
+            {showSideBar && (
+              <Modal
+                className="z-10 mt-16 h-[calc(100vh-4rem)] tablet:hidden"
+                setShowModal={setShowSidebar}
+              >
+                <Sidebar
+                  setShowSidebar={setShowSidebar}
+                  isLight={isLight}
+                  setIsLight={setIsLight}
+                />
+              </Modal>
             )}
             <App showSideBar={showSideBar} setShowSidebar={setShowSidebar} />
           </div>

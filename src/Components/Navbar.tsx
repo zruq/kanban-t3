@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import type { Dispatch } from "react";
 import NewTask from "./NewTask";
 import Button from "./shared/Button";
@@ -8,6 +8,7 @@ import DeleteModal from "./DeleteModal";
 import NewBoard from "./NewBoard";
 import { trpc } from "../utils/trpc";
 import type { Action } from "../state/reducer";
+import Sidebar from "./Sidebar";
 
 type NavbarProps = {
   boardsList: { id: number; name: string }[];
@@ -19,8 +20,10 @@ type NavbarProps = {
     id: number;
   }[];
   dispatch: Dispatch<Action>;
+  setShowSidebar: Dispatch<SetStateAction<boolean>>;
 };
 const Navbar = ({
+  setShowSidebar,
   dispatch,
   boardsList,
   boardID,
@@ -41,9 +44,15 @@ const Navbar = ({
   return (
     <>
       <div className="flex  h-16 w-full items-center justify-between border-b border-linesLight bg-white p-6 dark:border-linesDark dark:bg-darkGrey tablet:h-[5rem] desktop:h-[6rem]">
-        <div className={showSideBar ? "" : "flex items-center justify-center "}>
+        <div
+          className={
+            showSideBar
+              ? "flex items-center justify-center tablet:block"
+              : "flex items-center justify-center "
+          }
+        >
           {!showSideBar && (
-            <div className="flex h-16 items-center border-r border-linesLight pr-8 dark:border-linesDark tablet:h-[5rem] desktop:h-[6rem]">
+            <div className="hidden h-16 items-center border-r border-linesLight pr-8 dark:border-linesDark tablet:flex tablet:h-[5rem] desktop:h-[6rem]">
               <svg
                 width="153"
                 height="26"
@@ -84,12 +93,35 @@ const Navbar = ({
               </svg>
             </div>
           )}
+          <div className="tablet:hidden">
+            <svg width="24" height="25" xmlns="http://www.w3.org/2000/svg">
+              <g fill="#635FC7" fillRule="evenodd">
+                <rect width="6" height="25" rx="2" />
+                <rect opacity=".75" x="9" width="6" height="25" rx="2" />
+                <rect opacity=".5" x="18" width="6" height="25" rx="2" />
+              </g>
+            </svg>
+          </div>
           <h1
             className={`${
-              showSideBar ? "" : "ml-8"
-            } text-hxl capitalize text-black dark:text-white `}
+              showSideBar ? "ml-4 tablet:ml-0" : "ml-4 tablet:ml-6 desktop:ml-8"
+            } text-hl capitalize text-black dark:text-white tablet:text-[1.25rem] tablet:font-bold tablet:leading-[1.575rem] desktop:text-hxl `}
           >
             {boardName}
+            <svg
+              onClick={() => setShowSidebar(!showSideBar)}
+              className="ml-2 inline-block cursor-pointer tablet:hidden"
+              width="10"
+              height="7"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke="#635FC7"
+                strokeWidth="2"
+                fill="none"
+                d="m1 1 4 4 4-4"
+              />
+            </svg>
           </h1>
         </div>
         <div className="relative flex items-center justify-evenly">
@@ -98,9 +130,23 @@ const Navbar = ({
               setShowModal(1);
             }}
             cType="primaryL"
-            className="mr-4 block w-[10.25rem]"
+            className="mr-4 hidden py-4 px-6 tablet:block tablet:w-[10.25rem]"
           >
             + Add New Task
+          </Button>
+          <Button
+            onClick={() => {
+              setShowModal(1);
+            }}
+            cType="primaryL"
+            className="mr-4 block py-3 px-4 tablet:hidden"
+          >
+            <svg width="12" height="12" xmlns="http://www.w3.org/2000/svg">
+              <path
+                fill="#FFF"
+                d="M7.368 12V7.344H12V4.632H7.368V0H4.656v4.632H0v2.712h4.656V12z"
+              />
+            </svg>{" "}
           </Button>
           <svg
             onClick={(e) => {
@@ -119,7 +165,7 @@ const Navbar = ({
             </g>
           </svg>
           {showSettings && (
-            <ul className="absolute right-[1.5%] top-[130%] min-w-[12rem] cursor-pointer rounded-lg bg-white p-4 text-bodyl  text-mediumGrey dark:bg-veryDarkGrey">
+            <ul className="absolute right-[1.5%] top-[130%] z-20 min-w-[12rem] cursor-pointer rounded-lg bg-white p-4 text-bodyl  text-mediumGrey dark:bg-veryDarkGrey">
               <li
                 className="hover:text-black dark:hover:text-lightGrey"
                 onClick={() => {

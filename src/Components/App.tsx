@@ -138,9 +138,14 @@ const App = ({ setShowSidebar, showSideBar }: AppProps) => {
   return (
     <>
       <div
-        className={`h-full ${showSideBar ? "w-[calc(100vw-300px)]" : "w-full"}`}
+        className={`h-full ${
+          showSideBar
+            ? "w-full tablet:w-[calc(100vw-261px)] desktop:w-[calc(100vw-300px)]"
+            : "w-full"
+        }`}
       >
         <Navbar
+          setShowSidebar={setShowSidebar}
           boardID={activeBoard.id}
           dispatch={dispatch}
           showSideBar={showSideBar}
@@ -225,7 +230,7 @@ const App = ({ setShowSidebar, showSideBar }: AppProps) => {
         <Button
           onClick={() => setShowSidebar(true)}
           cType="primaryL"
-          className="fixed bottom-8 -left-1 rounded-l-none"
+          className="fixed bottom-8 -left-1 hidden rounded-l-none tablet:block"
         >
           <svg width="16" height="11" xmlns="http://www.w3.org/2000/svg">
             <path

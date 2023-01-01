@@ -3,12 +3,13 @@ import type { Dispatch, ReactNode, SetStateAction } from "react";
 import { useEffect, useRef } from "react";
 
 type ModalProps = {
+  className?: string;
   children: ReactNode;
   setShowModal:
     | Dispatch<SetStateAction<boolean | number>>
     | Dispatch<SetStateAction<boolean>>;
 };
-const Modal = ({ children, setShowModal }: ModalProps) => {
+const Modal = ({ children, setShowModal, className }: ModalProps) => {
   const elRef = useRef<HTMLDivElement | null>(null);
   if (!elRef.current) elRef.current = document.createElement("div");
   useEffect(() => {
@@ -21,7 +22,10 @@ const Modal = ({ children, setShowModal }: ModalProps) => {
 
   return createPortal(
     <div
-      className="absolute z-50 flex h-screen w-screen items-start justify-center overflow-auto bg-black bg-opacity-50 p-4"
+      className={
+        "absolute z-50 flex h-screen w-screen items-start justify-center overflow-auto bg-black bg-opacity-50 p-4 " +
+        className
+      }
       onClick={() => setShowModal(false)}
     >
       {children}

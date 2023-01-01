@@ -17,6 +17,7 @@ type NewBoardProps = {
 };
 
 const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
+  const { boardsList } = useContext(AppStateContext);
   const [boardState, setBoardState] = useState(
     board
       ? {
@@ -206,7 +207,8 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
         <Button
           disabled={
             !!boardState.name.error ||
-            !!boardState.columns.find((col) => col.error)?.error
+            !!boardState.columns.find((col) => col.error)?.error ||
+            newBoardMutation.isLoading
           }
           cType="primaryS"
           className="my-0 w-full disabled:cursor-not-allowed disabled:bg-veryDarkGrey"
@@ -214,11 +216,31 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
           onClick={(e) => {
             e.preventDefault();
             let theresAnError = false;
+
             if (!boardState.name.content) {
               setBoardState((boardState) => {
                 return {
                   ...boardState,
                   name: { content: "", error: "Can’t be empty" },
+                };
+              });
+              theresAnError = true;
+            }
+            if (
+              boardsList.filter(
+                (board) =>
+                  board.name.trim().toLowerCase() ===
+                    boardState.name.content.trim().toLowerCase() &&
+                  board.id !== boardState.id
+              ).length >= 1
+            ) {
+              setBoardState((boardState) => {
+                return {
+                  ...boardState,
+                  name: {
+                    content: boardState.name.content,
+                    error: "Must be unique",
+                  },
                 };
               });
               theresAnError = true;
@@ -229,11 +251,15 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
                 theresAnError = true;
                 return { ...col, error: "Can’t be empty" };
               }
-              if (uniqueColNames.find((name) => name === col.name.trim())) {
+              if (
+                uniqueColNames.find(
+                  (name) => name.toLowerCase() === col.name.trim().toLowerCase()
+                )
+              ) {
                 theresAnError = true;
                 return { ...col, error: "Must be unique" };
               } else {
-                uniqueColNames.push(col.name.trim());
+                uniqueColNames.push(col.name.trim().toLowerCase());
               }
               return col;
             });
@@ -265,8 +291,22 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
             }
           }}
         >
-          {board ? "Save Changes" : "Create New Board"}
+          {board ? (
+            "Save Changes"
+          ) : newBoardMutation.isLoading ? (
+            <div className="flex items-center justify-center">
+              <div className="mr-2  inline-block h-4 w-4  animate-spin rounded-full border-l border-linesLight"></div>{" "}
+              <div className="inline-block"> Creating New Board</div>
+            </div>
+          ) : (
+            "Create New Board"
+          )}
         </Button>
+        {newBoardMutation.isError && (
+          <div className="text-center text-bodyl text-red ">
+            Something wrong happened, please try again.
+          </div>
+        )}
       </form>
     </Card>
   );

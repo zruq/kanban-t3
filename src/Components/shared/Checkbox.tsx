@@ -33,11 +33,13 @@ const Checkbox = ({
         });
       }}
       className={
-        "flex w-[18.43rem] cursor-pointer rounded-[4px] bg-lightGrey p-3 hover:bg-purple hover:bg-opacity-25 dark:bg-veryDarkGrey dark:hover:bg-purple dark:hover:bg-opacity-25 tablet:w-[26rem] " +
+        "flex w-[18.43rem] cursor-pointer items-center justify-start rounded-[4px] bg-lightGrey p-3 hover:bg-purple hover:bg-opacity-25 dark:bg-veryDarkGrey dark:hover:bg-purple dark:hover:bg-opacity-25 tablet:w-[26rem] " +
         className
       }
     >
-      <Box isCompleted={isCompleted} />
+      <div className="h-4 w-4">
+        <Box isCompleted={isCompleted} />
+      </div>
       <div
         className={`cursor-text px-4 text-hs tracking-normal text-black dark:text-white ${
           isCompleted ? "text-opacity-50 line-through dark:text-opacity-50" : ""

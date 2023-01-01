@@ -105,9 +105,11 @@ const Navbar = ({
           <h1
             className={`${
               showSideBar ? "ml-4 tablet:ml-0" : "ml-4 tablet:ml-6 desktop:ml-8"
-            } text-hl capitalize text-black dark:text-white tablet:text-[1.25rem] tablet:font-bold tablet:leading-[1.575rem] desktop:text-hxl `}
+            } overflow-hidden  whitespace-nowrap text-hl capitalize text-black dark:text-white tablet:text-[1.25rem] tablet:font-bold tablet:leading-[1.575rem] desktop:text-hxl `}
           >
-            {boardName}
+            <span className="... inline-block w-36 truncate text-ellipsis tablet:w-44 desktop:w-96">
+              {boardName}
+            </span>
             {showSideBar ? (
               <svg
                 width="10"

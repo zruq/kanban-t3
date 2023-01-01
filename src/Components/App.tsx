@@ -57,8 +57,10 @@ const App = ({ setShowSidebar, showSideBar }: AppProps) => {
         distance: 8,
       },
     }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 30, distance: 8 },
+    }),
     useSensor(MouseSensor, { activationConstraint: { distance: 10 } }),
-    useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })

@@ -9,7 +9,7 @@ const Card = ({
     <div
       {...props}
       className={
-        "my-auto h-fit w-[30rem] rounded-md bg-white p-8 dark:bg-darkGrey " +
+        "my-auto h-fit w-[21.43rem] rounded-md bg-white p-8 dark:bg-darkGrey tablet:w-[30rem] " +
         className
       }
     >

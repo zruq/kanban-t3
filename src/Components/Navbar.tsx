@@ -1,4 +1,5 @@
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import type { SetStateAction } from "react";
 import type { Dispatch } from "react";
 import NewTask from "./NewTask";
 import Button from "./shared/Button";
@@ -8,7 +9,6 @@ import DeleteModal from "./DeleteModal";
 import NewBoard from "./NewBoard";
 import { trpc } from "../utils/trpc";
 import type { Action } from "../state/reducer";
-import Sidebar from "./Sidebar";
 
 type NavbarProps = {
   boardsList: { id: number; name: string }[];

@@ -51,8 +51,8 @@ const ViewTask = ({
           if (showDropdown) setShowDropdown(false);
         }}
       >
-        <div className="relative flex items-center justify-between pb-6">
-          <h2 className="pr-6 text-hl text-black dark:text-white">
+        <div className="relative flex  items-center justify-between pb-6">
+          <h2 className="pr-4 text-hl text-black dark:text-white tablet:pr-6">
             {task.title}
           </h2>
           <svg
@@ -60,7 +60,7 @@ const ViewTask = ({
             width="6"
             height="20"
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-2 cursor-pointer fill-mediumGrey hover:fill-purple dark:hover:fill-purpleHover"
+            className="h-5 w-3 cursor-pointer  fill-mediumGrey hover:fill-purple dark:hover:fill-purpleHover"
           >
             <g fillRule="evenodd">
               <circle cx="2.308" cy="2.308" r="2.308" />
@@ -71,7 +71,7 @@ const ViewTask = ({
           {showSettings && (
             <ul className="absolute -right-[24%] top-[70%] z-50 min-w-[12rem] cursor-pointer rounded-lg bg-white p-4 text-bodyl  text-mediumGrey dark:bg-veryDarkGrey">
               <li
-                className="hover:text-black"
+                className="hover:text-black dark:hover:text-white"
                 onClick={() => {
                   setShowModal(-1);
                 }}

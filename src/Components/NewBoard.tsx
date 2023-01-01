@@ -171,7 +171,7 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
                     ),
                   })
                 }
-                className="cursor-pointer fill-mediumGrey hover:fill-red"
+                className="w-4 cursor-pointer fill-mediumGrey hover:fill-red"
                 width="15"
                 height="15"
                 xmlns="http://www.w3.org/2000/svg"

@@ -17,12 +17,16 @@ const DeleteModal = ({
           : `Are you sure you want to delete the ‘${title}’ board? This action will remove all columns and tasks and cannot be reversed.`}
       </div>
       <div className="">
-        <Button cType="destructive" className="mr-4 w-[48%]" onClick={onDelete}>
+        <Button
+          cType="destructive"
+          className="mb-4 w-full tablet:mr-4 tablet:mb-0 tablet:w-[48%]"
+          onClick={onDelete}
+        >
           Delete
         </Button>
         <Button
           cType="secondary"
-          className="w-[48%]"
+          className="w-full tablet:w-[48%]"
           onClick={() => setShowModal(false)}
         >
           Cancel

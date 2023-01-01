@@ -207,7 +207,7 @@ recharge the batteries a little."
                     ),
                   })
                 }
-                className="cursor-pointer fill-mediumGrey hover:fill-red"
+                className="w-4 cursor-pointer fill-mediumGrey hover:fill-red"
                 width="15"
                 height="15"
                 xmlns="http://www.w3.org/2000/svg"
@@ -364,14 +364,14 @@ recharge the batteries a little."
             }
           }}
           cType="primaryS"
-          className="my-0 mt-6 w-full disabled:cursor-not-allowed disabled:bg-veryDarkGrey"
+          className="my-0 mt-6 w-full disabled:cursor-not-allowed disabled:opacity-25"
           type="submit"
         >
           {task ? (
             "Save Changes"
           ) : mutation.isLoading ? (
             <div className="flex items-center justify-center">
-              <div className="mr-2  inline-block h-4 w-4  animate-spin rounded-full border-l border-linesLight"></div>{" "}
+              <div className="mr-2  inline-block h-4 w-4  animate-spin rounded-full border-l border-purple "></div>{" "}
               <div className="inline-block"> Creating New Task</div>
             </div>
           ) : (

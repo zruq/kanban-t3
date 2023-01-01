@@ -187,7 +187,10 @@ export function reducer(state: StateType, action: Action): StateType {
       return action.payload;
     case "SILENT_EDIT_BOARD":
       return {
-        activeBoardId: action.payload.id,
+        activeBoardId:
+          action.payload.id === -1
+            ? action.payload.newBoard.id
+            : action.payload.id,
         boards: state.boards.map((board) => {
           if (board.id === action.payload.id) return action.payload.newBoard;
           return board;
@@ -258,23 +261,9 @@ export function reducer(state: StateType, action: Action): StateType {
     default:
       return state;
   }
-  // if (action.type === "REPLACE_BOARDS_LIST")
-  //   return { ...state, boardsList: action.payload };
-  // if (action.type === "CHANGE_BOARD")
-  //   return { ...state, board: action.payload };
-  // if (action.type === "EDIT_BOARD")
-  //   return {
-  //     board: action.payload,
-  //     boardsList: state.boardsList.map((board) => {
-  //       if (board.id === action.payload.id)
-  //         return { id: board.id, name: action.payload.name };
-  //       return board;
-  //     }),
-  //   };
 }
 
 export type Action =
-  | EditBoard
   | SilentEditBoard
   | Populate
   | AddBoard
@@ -286,7 +275,8 @@ export type Action =
   | ToggleSubtask
   | MoveTask
   | SilentEditTask
-  | ChangeTaskOrder;
+  | ChangeTaskOrder
+  | EditBoard;
 
 type ChangeTaskOrder = {
   type: "CHANGE_TASK_ORDER";

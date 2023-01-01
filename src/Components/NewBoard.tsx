@@ -213,7 +213,7 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
             newBoardMutation.isLoading
           }
           cType="primaryS"
-          className="my-0 w-full disabled:cursor-not-allowed disabled:bg-veryDarkGrey"
+          className="my-0 w-full disabled:cursor-not-allowed disabled:opacity-25"
           type="submit"
           onClick={(e) => {
             e.preventDefault();

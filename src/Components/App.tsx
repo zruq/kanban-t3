@@ -80,7 +80,6 @@ const App = ({ setShowSidebar, showSideBar }: AppProps) => {
     const overColId =
       +over?.data?.current?.sortable?.containerId.slice(3) ||
       (over?.data?.current?.colid as number);
-    console.log(active.id, `on top`, over.id);
     if (activeColId !== overColId) {
       dispatch({
         type: "MOVE_TASK",
@@ -190,12 +189,25 @@ const App = ({ setShowSidebar, showSideBar }: AppProps) => {
                 ) : null}
               </DragOverlay>
             </DndContext>
-            <button
-              onClick={() => setShowModal(-1)}
-              className="mt-10 flex min-h-[90%] w-[17.5rem] min-w-[17.5rem] max-w-[17.5rem] cursor-pointer items-center justify-center rounded-md bg-opacity-25 bg-gradient-to-br from-[#E9EFFA] to-[#e9effa80] text-hxl text-mediumGrey hover:text-purple dark:bg-opacity-25 dark:from-[#2b2c3740] dark:to-[#2b2c3720]"
-            >
-              + New Column
-            </button>
+            {activeBoard.columnsList.length >= 1 ? (
+              <button
+                onClick={() => setShowModal(-1)}
+                className="mt-10 flex min-h-[90%] w-[17.5rem] min-w-[17.5rem] max-w-[17.5rem] cursor-pointer items-center justify-center rounded-md bg-opacity-25 bg-gradient-to-br from-[#E9EFFA] to-[#e9effa80] text-hxl text-mediumGrey hover:text-purple dark:bg-opacity-25 dark:from-[#2b2c3740] dark:to-[#2b2c3720]"
+              >
+                + New Column
+              </button>
+            ) : (
+              <div className="flex h-full w-full flex-col items-center justify-center text-center text-hl text-mediumGrey">
+                This board is empty. Create a new column to get started.
+                <Button
+                  cType="primaryL"
+                  onClick={() => setShowModal(-1)}
+                  className="mt-6"
+                >
+                  + Add New Column
+                </Button>
+              </div>
+            )}
           </div>
           {isNumber(showModal) && (
             <Modal setShowModal={setShowModal}>

@@ -126,11 +126,12 @@ const Navbar = ({
         </div>
         <div className="relative flex items-center justify-evenly">
           <Button
+            disabled={colsList.length === 0}
             onClick={() => {
               setShowModal(1);
             }}
             cType="primaryL"
-            className="mr-4 hidden py-4 px-6 tablet:block tablet:w-[10.25rem]"
+            className="mr-4 hidden py-4 px-6 disabled:cursor-not-allowed disabled:opacity-25  tablet:block tablet:w-[10.25rem]"
           >
             + Add New Task
           </Button>

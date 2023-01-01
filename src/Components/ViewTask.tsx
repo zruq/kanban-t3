@@ -69,7 +69,7 @@ const ViewTask = ({
             </g>
           </svg>
           {showSettings && (
-            <ul className="absolute -right-[24%] top-[70%] z-50 min-w-[12rem] cursor-pointer rounded-lg bg-white p-4 text-bodyl  text-mediumGrey dark:bg-veryDarkGrey">
+            <ul className="absolute top-[70%] -right-[16%] z-50 cursor-pointer rounded-lg bg-white p-4 text-bodyl text-mediumGrey dark:bg-veryDarkGrey  tablet:-right-[24%] tablet:min-w-[12rem]">
               <li
                 className="hover:text-black dark:hover:text-white"
                 onClick={() => {

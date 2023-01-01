@@ -130,6 +130,40 @@ export const authRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      if (input.boardID === -1) {
+        const board = await ctx.prisma.board.create({
+          data: {
+            name: input.name,
+            userId: ctx.session.user.id,
+            Column: {
+              createMany: {
+                data: input.columns.map((col) => {
+                  return { name: col.name };
+                }),
+              },
+            },
+          },
+          select: {
+            id: true,
+            name: true,
+            Column: {
+              orderBy: { id: "asc" },
+              select: {
+                name: true,
+                id: true,
+              },
+            },
+          },
+        });
+        return {
+          id: board.id,
+          name: board.name,
+          tasks: [],
+          columnsList: board.Column.map((column) => {
+            return { name: column.name, id: column.id };
+          }),
+        };
+      }
       const columnsToUpdate = input.columns.filter((column) => column.id);
       const columnsToCreate = input.columns.filter((column) => !column.id);
       columnsToUpdate.forEach(async (column) => {

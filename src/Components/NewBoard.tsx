@@ -9,7 +9,7 @@ type NewBoardProps = {
   board?: {
     name: string;
     id?: number;
-    columns: { name: string; id?: number }[];
+    columns: { name: string; id?: number; fakeid?: number }[];
   };
   setShowModal:
     | Dispatch<SetStateAction<boolean>>
@@ -19,17 +19,27 @@ type NewBoardProps = {
 const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
   const [boardState, setBoardState] = useState(
     board
-      ? board
+      ? {
+          name: { content: board.name, error: "" },
+          id: board.id,
+          columns: board.columns.map((col) => {
+            return {
+              name: col.name,
+              id: col.id,
+              error: "",
+              fakeid: col.fakeid,
+            };
+          }),
+        }
       : {
-          name: "",
+          name: { content: "", error: "" },
           id: undefined,
           columns: [
-            { name: "Todo", id: undefined },
-            { name: "Doing", id: undefined },
+            { name: "Todo", id: undefined, fakeid: -1, error: "" },
+            { name: "Doing", id: undefined, fakeid: -2, error: "" },
           ],
         }
   );
-
   const { dispatch } = useContext(AppStateContext);
   const mutation = trpc.auth.editBoard.useMutation({
     onSuccess: (data) => {
@@ -55,36 +65,100 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
         <h2 className="pb-6 text-hl text-black dark:text-white">
           {board ? "Edit Board" : "Add New Board"}
         </h2>
-        <label className="text-hs tracking-normal text-mediumGrey dark:text-white">
+        <label className=" text-hs tracking-normal text-mediumGrey dark:text-white">
           Board Name
-          <input
-            placeholder="e.g. Web Design"
-            className={`textInput`}
-            value={boardState.name}
-            onChange={(e) =>
-              setBoardState({ ...boardState, name: e.target.value })
-            }
-          />
+          <div className="relative">
+            <input
+              onBlur={(e) => {
+                if (!e.target.value) {
+                  setBoardState({
+                    ...boardState,
+                    name: {
+                      content: boardState.name.content,
+                      error: "Can't be empty",
+                    },
+                  });
+                }
+              }}
+              placeholder="e.g. Web Design"
+              className={`textInput ${
+                boardState.name.error ? "border-red" : ""
+              } `}
+              value={boardState.name.content}
+              onChange={(e) => {
+                setBoardState({
+                  ...boardState,
+                  name: {
+                    content: e.target.value,
+                    error: e.target.value ? "" : "Can’t be empty",
+                  },
+                });
+              }}
+            />
+            {boardState.name.error && (
+              <div className="absolute right-0 top-0 bottom-0 my-auto mr-4 h-fit text-bodyl text-red">
+                {boardState.name.error}
+              </div>
+            )}
+          </div>
         </label>
 
         <label className="text-hs tracking-normal text-mediumGrey dark:text-white">
           <div className="pb-2 pt-4"> Board Columns</div>
           {boardState.columns.map((column, index) => (
-            <div className="flex items-center justify-start pb-3" key={index}>
-              <input
-                className={`textInput my-0 mr-4 `}
-                value={column.name}
-                onChange={(e) =>
-                  setBoardState({
-                    ...boardState,
-                    columns: boardState.columns.map((colmny, indexie) => {
-                      if (indexie === index)
-                        return { ...colmny, name: e.target.value };
-                      return colmny;
-                    }),
-                  })
-                }
-              />
+            <div
+              className="flex items-center justify-start pb-3"
+              key={column.id || column.fakeid}
+            >
+              <div className="relative mr-4 w-full ">
+                <input
+                  onBlur={(e) => {
+                    if (!e.target.value) {
+                      setBoardState((boardState) => {
+                        return {
+                          ...boardState,
+                          columns: boardState.columns.map((col) => {
+                            if (
+                              col.id
+                                ? col.id === column.id
+                                : col.fakeid === column.fakeid
+                            )
+                              return { ...col, error: "Can’t be empty" };
+                            return col;
+                          }),
+                        };
+                      });
+                    }
+                  }}
+                  className={`textInput my-0 
+                  
+                  ${column.error ? "border-red" : ""}`}
+                  value={column.name}
+                  onChange={(e) => {
+                    setBoardState({
+                      ...boardState,
+                      columns: boardState.columns.map((colmny) => {
+                        if (
+                          column.id
+                            ? colmny.id === column.id
+                            : colmny.fakeid === column.fakeid
+                        )
+                          return {
+                            ...colmny,
+                            name: e.target.value,
+                            error: e.target.value ? "" : "Can’t be empty",
+                          };
+                        return colmny;
+                      }),
+                    });
+                  }}
+                />
+                {column.error && (
+                  <div className="absolute right-0 top-0 bottom-0 my-auto mr-4 h-fit text-bodyl text-red">
+                    {column.error}
+                  </div>
+                )}
+              </div>
               <svg
                 onClick={() =>
                   setBoardState({
@@ -114,7 +188,15 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
             e.preventDefault();
             setBoardState({
               ...boardState,
-              columns: [...boardState.columns, { name: "", id: undefined }],
+              columns: [
+                ...boardState.columns,
+                {
+                  name: "",
+                  fakeid: new Date().getTime(),
+                  id: undefined,
+                  error: "",
+                },
+              ],
             });
           }}
         >
@@ -122,29 +204,62 @@ const NewBoard = ({ board, setShowModal }: NewBoardProps) => {
         </Button>
 
         <Button
+          disabled={
+            !!boardState.name.error ||
+            !!boardState.columns.find((col) => col.error)?.error
+          }
           cType="primaryS"
-          className="my-0 w-full"
+          className="my-0 w-full disabled:cursor-not-allowed disabled:bg-veryDarkGrey"
           type="submit"
           onClick={(e) => {
             e.preventDefault();
+            let theresAnError = false;
+            if (!boardState.name.content) {
+              setBoardState((boardState) => {
+                return {
+                  ...boardState,
+                  name: { content: "", error: "Can’t be empty" },
+                };
+              });
+              theresAnError = true;
+            }
+            const uniqueColNames: string[] = [];
+            const columns = boardState.columns.map((col) => {
+              if (!col.name) {
+                theresAnError = true;
+                return { ...col, error: "Can’t be empty" };
+              }
+              if (uniqueColNames.find((name) => name === col.name.trim())) {
+                theresAnError = true;
+                return { ...col, error: "Must be unique" };
+              } else {
+                uniqueColNames.push(col.name.trim());
+              }
+              return col;
+            });
+            setBoardState((boardState) => {
+              return { ...boardState, columns: columns };
+            });
+            if (theresAnError) return;
+            //
             if (board) {
               mutation.mutate({
                 boardID: boardState.id as number,
                 columns: boardState.columns,
-                name: boardState.name,
+                name: boardState.name.content,
               });
               dispatch({
                 type: "EDIT_BOARD",
                 payload: {
                   boardID: boardState.id as number,
                   columns: boardState.columns,
-                  name: boardState.name,
+                  name: boardState.name.content,
                 },
               });
               setShowModal(false);
             } else {
               newBoardMutation.mutate({
-                name: boardState.name,
+                name: boardState.name.content,
                 columns: boardState.columns,
               });
             }

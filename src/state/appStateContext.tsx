@@ -100,7 +100,9 @@ const AppStateProvider = ({ children }: { children: ReactElement }) => {
           </g>
         </svg>
         <div className="my-14 text-hm text-white">
-          Welcome back {session.data?.user?.name}!
+          {session.data?.user?.name ? (
+            <> Welcome back {session.data?.user?.name}!</>
+          ) : null}
         </div>
       </div>
     );

@@ -8,7 +8,7 @@ Made using T3 stack( NextJS, TRPC, tailwind, prisma, next Auth) and dnd-kit.
 ![add task](add-task.gif)
 
 
-no unexpected behavior
+No unexpected weird behavior
 
 
 ![](no-buggy-add-subtask.gif)

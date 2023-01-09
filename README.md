@@ -9,6 +9,8 @@ Made using T3 stack( NextJS, TRPC, tailwind, prisma, next Auth) and dnd-kit.
 
 
 no unexpected behavior
+
+
 ![](no-buggy-add-subtask.gif)
 ###### Viewing a Task
 ![](view-task.gif)

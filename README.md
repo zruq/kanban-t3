@@ -14,7 +14,11 @@ No unexpected weird behavior
 ![](no-buggy-add-subtask.gif)
 ###### Viewing a Task
 ![](view-task.gif)
+
+
 You can have as many columns as you wish
+
+
 ![](as-many-cols-as-you-wish.gif)
 
 

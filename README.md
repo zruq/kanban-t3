@@ -1,3 +1,17 @@
+# Introduction
+A fully functional task management web app, where users can have multiple boards, and each task can have multiple subtasks. also users are able to drag and drop tasks either vertically to change their priority, or horizontally to change their status.
+Made using T3 stack( NextJS, TRPC, tailwind, prisma, next Auth) and dnd-kit.
+
+###### Adding task
+![add task](add-task.gif)
+no unexpected behavior
+![](no-buggy-add-subtask.gif)
+###### Viewing a Task
+![](view-task.gif)
+You can have as many columns as you wish
+![](as-many-cols-as-you-wish.gif)
+
+
 # Getting Started
 
 Follow the steps below:

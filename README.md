@@ -1,28 +1,37 @@
-# Create T3 App
+# Getting Started
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+Follow the steps below:
 
-## What's next? How do I make an app with this?
+## ⏳ Installation
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+First, install all required dependencies :
+```
+npm install
+```
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+Create a `.env` file inside the `/` folder having the following structure:
+```env
+DATABASE_URL=
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+NEXTAUTH_SECRET
+NEXTAUTH_URL = http://localhost:3000 # or the link to your website
 
-## Learn More
+# Next Auth Discord Provider
+DISCORD_CLIENT_ID=
+DISCORD_CLIENT_SECRET=
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+# Next Auth Google Provider
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+# Next Auth Github Provider
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+```
 
-## How do I deploy this?
+If you want to remove or add auth providers, you have to modify the following files :
+`/src/env/schema.mjs` and `/src/pages/api/auth/[...nextauth].ts`.
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+# The Design 
+The Figma file I used is from [frontend Mentor](https://www.frontendmentor.io/challenges/kanban-task-management-web-app-wgQLt-HlbB)

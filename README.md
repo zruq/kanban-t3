@@ -1,5 +1,6 @@
 #  Kanban task management web app 
 
+![The app is fully responsive!](/Kanban.jpg)
 
 ## Table of contents
 
@@ -33,7 +34,7 @@ Users are able to:
 
 ### Screenshot
 
-![The app is fully responsive!](/Kanban.jpg)
+![Overview.gif](/)
 
 ### Links
 

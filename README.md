@@ -34,7 +34,7 @@ Users are able to:
 
 ### Screenshot
 
-![Overview.gif](/)
+![](/Overview.gif)
 
 ### Links
 
